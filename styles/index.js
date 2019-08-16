@@ -1,4 +1,5 @@
+import * as Button from './button';
 import * as Colors from './colors';
 import * as Typography from './typography';
 
-export { Colors, Typography };
+export { Button, Colors, Typography };

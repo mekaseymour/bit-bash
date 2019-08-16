@@ -2,12 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 
-const NumberNode = ({ data }) => {
+const NumberNode = ({ data, spacing }) => {
   const { num, size } = data;
 
   return (
     <TouchableOpacity
-      style={{ ...styles.numberNode, height: size, width: size }}
+      style={{ ...spacing, ...styles.numberNode, height: size, width: size }}
       onPress={() => console.log('number node pressed')}
       activeOpacity={0.8}
     >
