@@ -37,7 +37,7 @@ const App = props => {
   } else {
     return (
       <View style={styles.container}>
-        <GameScreen target={50} />
+        <GameScreen target={29} numbers={[29, 1, 1, 24, 3, 19]} />
       </View>
     );
   }
