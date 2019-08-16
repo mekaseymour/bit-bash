@@ -6,7 +6,7 @@ test('generates correct number nodes data', () => {
   const expected = [
     { size: 180, num: 29 },
     { size: 55, num: 1 },
-    { size: 59, num: 1 },
+    { size: 55, num: 1 },
     { size: 162, num: 24 },
     { size: 68, num: 3 },
     { size: 140, num: 19 },

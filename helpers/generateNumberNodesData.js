@@ -19,9 +19,9 @@ const generateNumberNodesData = nums => {
   const numbersRange = largestNum - smallestNum;
 
   return nums.map((num, i) => {
-    if (i === smallestNumPos) {
+    if (i === smallestNumPos || num === smallestNum) {
       return { size: MIN_NODE_SIZE, num };
-    } else if (i === largestNumPos) {
+    } else if (i === largestNumPos || num === largestNum) {
       return { size: MAX_NODE_SIZE, num };
     } else {
       return { size: calculateNodeSize(num / numbersRange), num };
