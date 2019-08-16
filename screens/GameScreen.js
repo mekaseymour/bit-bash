@@ -1,18 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../styles';
+import { Colors, Typography } from '../styles';
 
-const GameScreen = ({ target }) => {
+import NumberNode from '../components/NumberNode';
+import generateNumberNodesData from '../helpers/generateNumberNodesData';
+
+const GameScreen = ({ target, numbers }) => {
+  const [numberNodesData, setNumberNodesData] = useState(null);
+
+  useEffect(() => {
+    setNumberNodesData(generateNumberNodesData(numbers));
+  }, []);
+
   return (
     <View>
       <Text style={styles.targetNumber}>{target}</Text>
+      {!!numberNodesData && numberNodesData.map((data, i) => <NumberNode key={`node=${i}`} data={data} />)}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   targetNumber: {
-    fontFamily: 'lalezar',
+    ...Typography.mainFont,
     fontSize: 72,
     color: Colors.blue,
   },
