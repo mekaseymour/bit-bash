@@ -18,7 +18,7 @@ const handleFinishLoading = setLoadingComplete => {
 const loadResourcesAsync = async () => {
   await Promise.all([
     Font.loadAsync({
-      lalezar: require('./assets/fonts/Lalezar-Regular.ttf'),
+      bungee: require('./assets/fonts/Bungee-Regular.ttf'),
     }),
   ]);
 };

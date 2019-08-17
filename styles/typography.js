@@ -1,3 +1,7 @@
 export const mainFont = {
-  fontFamily: 'lalezar',
+  fontFamily: 'bungee',
+};
+
+export const large = {
+  fontSize: 65,
 };
