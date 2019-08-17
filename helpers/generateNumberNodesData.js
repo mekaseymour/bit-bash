@@ -5,8 +5,8 @@ preserve the order of the generated boards
 
 */
 
-const MIN_NODE_SIZE = 55;
-const MAX_NODE_SIZE = 180;
+const MIN_NODE_SIZE = 50;
+const MAX_NODE_SIZE = 150;
 const RANGE = MAX_NODE_SIZE - MIN_NODE_SIZE;
 
 const calculateNodeSize = relativeSize => MIN_NODE_SIZE + Math.round(RANGE * relativeSize);

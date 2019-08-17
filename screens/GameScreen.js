@@ -2,21 +2,63 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Colors, Typography } from '../styles';
 
-import { AddButton, NumberNode, PauseButton, SubtractButton, UndoButton } from '../components';
+import { AddButton, EquationDisplay, NumberNode, PauseButton, SubtractButton, UndoButton } from '../components';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
+import operations, { ADD, SUBTRACT, ADDITION_OPERATOR, SUBTRACTION_OPERATOR } from '../util/operations';
+
+const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
+const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
 const GameScreen = ({ target, numbers }) => {
+  const [equation, setEquation] = useState([]);
   const [numberNodesData, setNumberNodesData] = useState(null);
+  const [total, setTotal] = useState(null);
 
   useEffect(() => {
     setNumberNodesData(generateNumberNodesData(numbers));
   }, []);
 
+  const onNumberNodePress = num => {
+    const equationIsEmpty = equation.length === 0;
+    const equationHasOneNumberAndOperator = equation.length === 2;
+    const equationIsCompleted = equation.length === 3;
+
+    if (equationIsEmpty) {
+      setEquation([num]);
+    } else if (equationHasOneNumberAndOperator) {
+      setEquation([...equation, num]);
+
+      // evalutate equation & set total to result
+      const operator = equation[1];
+
+      switch (operator) {
+        case ADDITION_OPERATOR:
+          setTotal(operations[ADD](equation[0], num));
+          break;
+        case SUBTRACTION_OPERATOR:
+          setTotal(operations[SUBTRACT](equation[0], num));
+          break;
+      }
+    } else if (equationIsCompleted) {
+      setEquation([num]);
+    }
+  };
+
+  const onOperatorButtonPress = operator => {
+    if (equation.length === 1) {
+      setEquation([...equation, operator]);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
-        <Text style={styles.targetNumber}>{target}</Text>
+        <View>
+          <Text style={styles.targetNumber}>{target}</Text>
+          <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
+          <EquationDisplay equation={equation} />
+        </View>
         <View>
           <PauseButton style={styles.pauseButton} />
           <UndoButton />
@@ -28,18 +70,17 @@ const GameScreen = ({ target, numbers }) => {
             <NumberNode
               key={`node=${i}`}
               data={data}
+              onPress={() => onNumberNodePress(data.num)}
               spacing={{
-                marginTop: Math.floor(Math.random() * 10) + 3,
-                marginBottom: Math.floor(Math.random() * 10) + 3,
-                marginLeft: Math.floor(Math.random() * 30) + 3,
-                marginRight: Math.floor(Math.random() * 30) + 3,
+                marginVertical: VERTICAL_SPACING,
+                marginHorizontal: HORIZONTAL_SPACING,
               }}
             />
           ))}
       </View>
       <View style={styles.buttonsContainer}>
-        <AddButton />
-        <SubtractButton />
+        <AddButton onPress={onOperatorButtonPress} />
+        <SubtractButton onPress={onOperatorButtonPress} />
       </View>
     </View>
   );
@@ -61,6 +102,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
+    height: '60%',
   },
   pauseButton: {
     marginBottom: 10,
@@ -70,12 +112,22 @@ const styles = StyleSheet.create({
   },
   targetNumber: {
     ...Typography.mainFont,
-    fontSize: 72,
+    ...Typography.large,
     color: Colors.blue,
+    textAlign: 'center',
   },
   topSectionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  totalContainer: {
+    height: 60,
+  },
+  total: {
+    ...Typography.mainFont,
+    ...Typography.large,
+    color: Colors.gray,
+    textAlign: 'center',
   },
 });
 
