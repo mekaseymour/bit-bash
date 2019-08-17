@@ -4,6 +4,7 @@ import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 
 import GameScreen from './screens/GameScreen';
+import generateNumberNodesData from './helpers/generateNumberNodesData';
 
 function handleLoadingError(error: Error) {
   // In this case, you might want to report the error to your error reporting
@@ -37,7 +38,7 @@ const App = props => {
   } else {
     return (
       <View style={styles.container}>
-        <GameScreen target={29} numbers={[29, 1, 1, 24, 3, 19]} />
+        <GameScreen target={29} nodes={generateNumberNodesData([29, 1, 1, 24, 3, 19])} />
       </View>
     );
   }
