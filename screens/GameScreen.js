@@ -1,46 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import PropTypes from 'prop-types';
 import { Button, Colors, Typography } from '../styles';
 
-import { AddButton, EquationDisplay, NumberNode, PauseButton, SubtractButton, UndoButton } from '../components';
-import generateNumberNodesData from '../helpers/generateNumberNodesData';
-import operations, { ADD, SUBTRACT, ADDITION_OPERATOR, SUBTRACTION_OPERATOR } from '../util/operations';
+import {
+  AddButton,
+  DivideButton,
+  EquationDisplay,
+  MultiplyButton,
+  NumberNode,
+  PauseButton,
+  SubtractButton,
+  UndoButton,
+} from '../components';
+import handleNodesOperation from '../helpers/handleNodesOperation';
 
 const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
 const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
-const GameScreen = ({ target, numbers }) => {
+const GameScreen = ({ target, nodes }) => {
   const [equation, setEquation] = useState([]);
-  const [numberNodesData, setNumberNodesData] = useState(null);
+  const [nodesData, setNodesData] = useState(nodes);
   const [total, setTotal] = useState(null);
 
-  useEffect(() => {
-    setNumberNodesData(generateNumberNodesData(numbers));
-  }, []);
-
-  const onNumberNodePress = num => {
+  const onNumberNodePress = data => {
     const equationIsEmpty = equation.length === 0;
     const equationHasOneNumberAndOperator = equation.length === 2;
-    const equationIsCompleted = equation.length === 3;
+    const completeEquationOnDisplay = equation.length === 3;
 
     if (equationIsEmpty) {
-      setEquation([num]);
+      setEquation([data]);
     } else if (equationHasOneNumberAndOperator) {
-      setEquation([...equation, num]);
+      setEquation([...equation, data]);
 
-      // evalutate equation & set total to result
-      const operator = equation[1];
+      // evalutate equation, update nodes, set total to result
+      const operationResolution = handleNodesOperation(nodesData, [...equation, data]);
 
-      switch (operator) {
-        case ADDITION_OPERATOR:
-          setTotal(operations[ADD](equation[0], num));
-          break;
-        case SUBTRACTION_OPERATOR:
-          setTotal(operations[SUBTRACT](equation[0], num));
-          break;
-      }
-    } else if (equationIsCompleted) {
-      setEquation([num]);
+      setNodesData(operationResolution[0]);
+      setTotal(operationResolution[1]);
+    } else if (completeEquationOnDisplay) {
+      setEquation([data]);
     }
   };
 
@@ -65,12 +64,12 @@ const GameScreen = ({ target, numbers }) => {
         </View>
       </View>
       <View style={styles.nodesContainer}>
-        {!!numberNodesData &&
-          numberNodesData.map((data, i) => (
+        {!!nodesData &&
+          nodesData.map((data, i) => (
             <NumberNode
               key={`node=${i}`}
               data={data}
-              onPress={() => onNumberNodePress(data.num)}
+              onPress={() => onNumberNodePress(data)}
               spacing={{
                 marginVertical: VERTICAL_SPACING,
                 marginHorizontal: HORIZONTAL_SPACING,
@@ -81,6 +80,8 @@ const GameScreen = ({ target, numbers }) => {
       <View style={styles.buttonsContainer}>
         <AddButton onPress={onOperatorButtonPress} />
         <SubtractButton onPress={onOperatorButtonPress} />
+        <MultiplyButton onPress={onOperatorButtonPress} />
+        <DivideButton onPress={onOperatorButtonPress} />
       </View>
     </View>
   );
@@ -130,5 +131,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+GameScreen.propTypes = {
+  nodes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number, size: PropTypes.num, num: PropTypes.number }))
+    .isRequired,
+  target: PropTypes.number,
+};
 
 export default GameScreen;

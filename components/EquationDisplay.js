@@ -2,11 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { Colors, Typography } from '../styles';
+import equationForDisplay from '../helpers/equationForDisplay';
 
 const EquationDisplay = ({ equation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.equationText}>{equation.join(' ')}</Text>
+      <Text style={styles.equationText}>{equationForDisplay(equation)}</Text>
     </View>
   );
 };
