@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Colors, Typography } from '../styles';
 
@@ -7,9 +7,12 @@ import {
   AddButton,
   DivideButton,
   EquationDisplay,
+  GameLostModal,
+  GameWonModal,
   MultiplyButton,
   NumberNode,
   PauseButton,
+  PauseModal,
   SubtractButton,
   UndoButton,
 } from '../components';
@@ -22,35 +25,152 @@ const GameScreen = ({ target, nodes }) => {
   const [equation, setEquation] = useState([]);
   const [nodesData, setNodesData] = useState(nodes);
   const [total, setTotal] = useState(null);
+  const [gameHistory, setGameHistory] = useState([]);
+  const [gamePaused, setGamePaused] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [gameLost, setGameLost] = useState(false);
 
-  const onNumberNodePress = data => {
-    const equationIsEmpty = equation.length === 0;
-    const equationHasOneNumberAndOperator = equation.length === 2;
-    const completeEquationOnDisplay = equation.length === 3;
+  // add selected property to nodes
+  useEffect(() => {
+    setNodesData(
+      nodesData.map(node => {
+        node.selected = false;
+        return node;
+      })
+    );
+  }, []);
 
-    if (equationIsEmpty) {
-      setEquation([data]);
-    } else if (equationHasOneNumberAndOperator) {
-      setEquation([...equation, data]);
+  const equationIsExpectingOperator = () => equation.length === 1;
+  const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
+  const equationIsExpectingRightOperand = () => equation.length === 2;
 
+  const isValidNodePress = node => !equationIsExpectingOperator() || node.selected;
+
+  const toggledNode = node => ({ ...node, selected: !node.selected });
+
+  const nodesWithUpdatedNode = node => {
+    const nodes = [...nodesData];
+    const positionOfNodeToUpdate = nodes.findIndex(nodeFromState => node.id === nodeFromState.id);
+
+    nodes[positionOfNodeToUpdate] = node;
+    return nodes;
+  };
+
+  const pauseGame = () => setGamePaused(true);
+  const resumeGame = () => setGamePaused(false);
+  const winGame = () => setGameWon(true);
+  const loseGame = () => setGameLost(true);
+
+  const deselectNodes = nodes =>
+    updateGameState([
+      [
+        setNodesData,
+        nodes.map(node => {
+          if (node.selected) {
+            return { ...node, selected: false };
+          } else {
+            return node;
+          }
+        }),
+      ],
+    ]);
+
+  const handleNodeDeselect = () => {
+    if (equationIsExpectingRightOperand() || equationIsExpectingOperator()) {
+      updateGameState([[setEquation, []]]);
+    }
+  };
+
+  const handleNodeSelect = node => {
+    if (equationIsExpectingLeftOperand()) {
+      setEquation([node]);
+    } else if (equationIsExpectingRightOperand()) {
       // evalutate equation, update nodes, set total to result
-      const operationResolution = handleNodesOperation(nodesData, [...equation, data]);
+      const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
+      const nodesAfterOperation = operationResolution[0];
 
-      setNodesData(operationResolution[0]);
-      setTotal(operationResolution[1]);
-    } else if (completeEquationOnDisplay) {
-      setEquation([data]);
+      updateGameState([
+        [setTotal, operationResolution[1]],
+        [setEquation, [...equation, node]],
+        [setNodesData, nodesAfterOperation],
+      ]);
+      deselectNodes(nodesAfterOperation);
+      checkForWinningState(nodesAfterOperation);
+    }
+  };
+
+  const checkForWinningState = remainingNodes => {
+    const oneNodeRemaining = remainingNodes.length === 1;
+
+    if (oneNodeRemaining) {
+      const remainingNode = remainingNodes[0];
+
+      if (remainingNode.num === target) {
+        winGame();
+      } else {
+        loseGame();
+      }
+    }
+  };
+
+  const onNodePress = node => {
+    if (isValidNodePress(node)) {
+      const pressedNode = toggledNode(node);
+      updateGameState([[setNodesData, nodesWithUpdatedNode(pressedNode)]]);
+
+      const pressHasDeselectedNode = pressedNode.selected === false;
+
+      if (pressHasDeselectedNode) {
+        handleNodeDeselect();
+      } else {
+        handleNodeSelect(pressedNode);
+      }
     }
   };
 
   const onOperatorButtonPress = operator => {
     if (equation.length === 1) {
-      setEquation([...equation, operator]);
+      updateGameState([[setEquation, [...equation, operator]]]);
+    } else if (equation.length === 2) {
+      updateGameState([[setEquation, [equation[0], operator]]]);
     }
+  };
+
+  const onUndoButtonPress = () => {
+    const history = [...gameHistory];
+    const previousState = history.pop();
+
+    if (previousState && previousState.equation) {
+      setEquation(previousState.equation);
+    }
+
+    if (previousState && previousState.nodesData) {
+      setNodesData(previousState.nodesData);
+    }
+
+    if (previousState && previousState.hasOwnProperty('total')) {
+      setTotal(previousState.total);
+    }
+
+    setGameHistory(history);
+  };
+
+  /* takes array of arrays */
+  const updateGameState = setStateFunctionsAndData => {
+    snapshotCurrentState();
+    setStateFunctionsAndData.forEach(([setStateFunction, data]) => setStateFunction(data));
+  };
+
+  const snapshotCurrentState = () => {
+    const newHistory = [...gameHistory, { equation, nodesData, total }];
+    setGameHistory(newHistory);
   };
 
   return (
     <View style={styles.container}>
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => {}} />
+      <GameLostModal visible={gameLost} />
+      <GameWonModal visible={gameWon} />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View>
@@ -59,8 +179,8 @@ const GameScreen = ({ target, nodes }) => {
           <EquationDisplay equation={equation} />
         </View>
         <View>
-          <PauseButton style={styles.pauseButton} />
-          <UndoButton />
+          <PauseButton style={styles.pauseButton} onPress={pauseGame} />
+          <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
       <View style={styles.nodesContainer}>
@@ -69,7 +189,7 @@ const GameScreen = ({ target, nodes }) => {
             <NumberNode
               key={`node=${i}`}
               data={data}
-              onPress={() => onNumberNodePress(data)}
+              onPress={() => onNodePress(data)}
               spacing={{
                 marginVertical: VERTICAL_SPACING,
                 marginHorizontal: HORIZONTAL_SPACING,
