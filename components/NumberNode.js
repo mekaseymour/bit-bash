@@ -3,11 +3,12 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 
 const NumberNode = ({ data, onPress, spacing }) => {
-  const { num, size } = data;
+  const { num, size, selected } = data;
+  const nodeStyle = selected ? { ...styles.numberNode, ...styles.selected } : styles.numberNode;
 
   return (
     <TouchableOpacity
-      style={{ ...spacing, ...styles.numberNode, height: size, width: size }}
+      style={{ ...spacing, ...nodeStyle, height: size, width: size }}
       onPress={onPress}
       activeOpacity={0.8}
     >
@@ -29,5 +30,9 @@ const styles = StyleSheet.create({
     ...Typography.mainFont,
     color: Colors.white,
     fontSize: 30,
+  },
+  selected: {
+    borderWidth: 5,
+    borderColor: Colors.green,
   },
 });

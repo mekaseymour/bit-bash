@@ -45,8 +45,11 @@ const handleNodesOperation = (nodes, equation) => {
   const updatedNodeSize = updateSize(leftSideNode, result);
 
   const newNodes = [...nodes];
-  newNodes[nodes.indexOf(leftSideNode)] = { ...leftSideNode, size: updatedNodeSize, num: result };
-  newNodes.splice(nodes.indexOf(rightSideNode), 1);
+  const indexOfLeftOperand = nodes.findIndex(node => node.id === leftSideNode.id);
+  const indexOfRightOperand = nodes.findIndex(node => node.id === rightSideNode.id);
+
+  newNodes[indexOfLeftOperand] = { ...leftSideNode, size: updatedNodeSize, num: result };
+  newNodes.splice(indexOfRightOperand, 1);
 
   return [newNodes, result];
 };

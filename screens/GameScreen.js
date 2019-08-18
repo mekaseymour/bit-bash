@@ -23,29 +23,83 @@ const GameScreen = ({ target, nodes }) => {
   const [nodesData, setNodesData] = useState(nodes);
   const [total, setTotal] = useState(null);
 
-  const onNumberNodePress = data => {
-    const equationIsEmpty = equation.length === 0;
-    const equationHasOneNumberAndOperator = equation.length === 2;
-    const completeEquationOnDisplay = equation.length === 3;
+  // add selected property to nodes
+  useEffect(() => {
+    setNodesData(
+      nodesData.map(node => {
+        node.selected = false;
+        return node;
+      })
+    );
+  }, []);
 
-    if (equationIsEmpty) {
-      setEquation([data]);
-    } else if (equationHasOneNumberAndOperator) {
-      setEquation([...equation, data]);
+  const equationIsExpectingOperator = () => equation.length === 1;
+  const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
+  const equationIsExpectingRightOperand = () => equation.length === 2;
 
+  const isValidNodePress = node => !equationIsExpectingOperator() || node.selected;
+
+  const toggledNode = node => ({ ...node, selected: !node.selected });
+
+  const nodesWithUpdatedNode = node => {
+    const nodes = [...nodesData];
+    const positionOfNodeToUpdate = nodes.findIndex(nodeFromState => node.id === nodeFromState.id);
+
+    nodes[positionOfNodeToUpdate] = node;
+    return nodes;
+  };
+
+  const deselectNodes = nodes =>
+    setNodesData(
+      nodes.map(node => {
+        if (node.selected) {
+          return { ...node, selected: false };
+        } else {
+          return node;
+        }
+      })
+    );
+
+  const handleNodeDeselect = () => {
+    if (equationIsExpectingRightOperand() || equationIsExpectingOperator()) {
+      setEquation([]);
+    }
+  };
+
+  const handleNodeSelect = node => {
+    if (equationIsExpectingLeftOperand()) {
+      setEquation([node]);
+    } else if (equationIsExpectingRightOperand()) {
       // evalutate equation, update nodes, set total to result
-      const operationResolution = handleNodesOperation(nodesData, [...equation, data]);
+      const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
 
-      setNodesData(operationResolution[0]);
       setTotal(operationResolution[1]);
-    } else if (completeEquationOnDisplay) {
-      setEquation([data]);
+      setEquation([...equation, node]);
+      setNodesData(operationResolution[0]);
+      deselectNodes(operationResolution[0]);
+    }
+  };
+
+  const onNodePress = node => {
+    if (isValidNodePress(node)) {
+      const pressedNode = toggledNode(node);
+      setNodesData(nodesWithUpdatedNode(pressedNode));
+
+      const pressHasDeselectedNode = pressedNode.selected === false;
+
+      if (pressHasDeselectedNode) {
+        handleNodeDeselect();
+      } else {
+        handleNodeSelect(pressedNode);
+      }
     }
   };
 
   const onOperatorButtonPress = operator => {
     if (equation.length === 1) {
       setEquation([...equation, operator]);
+    } else if (equation.length === 2) {
+      setEquation([equation[0], operator]);
     }
   };
 
@@ -69,7 +123,7 @@ const GameScreen = ({ target, nodes }) => {
             <NumberNode
               key={`node=${i}`}
               data={data}
-              onPress={() => onNumberNodePress(data)}
+              onPress={() => onNodePress(data)}
               spacing={{
                 marginVertical: VERTICAL_SPACING,
                 marginHorizontal: HORIZONTAL_SPACING,
