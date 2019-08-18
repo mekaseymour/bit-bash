@@ -22,6 +22,7 @@ const GameScreen = ({ target, nodes }) => {
   const [equation, setEquation] = useState([]);
   const [nodesData, setNodesData] = useState(nodes);
   const [total, setTotal] = useState(null);
+  const [gameHistory, setGameHistory] = useState([]);
 
   // add selected property to nodes
   useEffect(() => {
@@ -50,19 +51,22 @@ const GameScreen = ({ target, nodes }) => {
   };
 
   const deselectNodes = nodes =>
-    setNodesData(
-      nodes.map(node => {
-        if (node.selected) {
-          return { ...node, selected: false };
-        } else {
-          return node;
-        }
-      })
-    );
+    updateGameState([
+      [
+        setNodesData,
+        nodes.map(node => {
+          if (node.selected) {
+            return { ...node, selected: false };
+          } else {
+            return node;
+          }
+        }),
+      ],
+    ]);
 
   const handleNodeDeselect = () => {
     if (equationIsExpectingRightOperand() || equationIsExpectingOperator()) {
-      setEquation([]);
+      updateGameState([[setEquation, []]]);
     }
   };
 
@@ -73,9 +77,11 @@ const GameScreen = ({ target, nodes }) => {
       // evalutate equation, update nodes, set total to result
       const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
 
-      setTotal(operationResolution[1]);
-      setEquation([...equation, node]);
-      setNodesData(operationResolution[0]);
+      updateGameState([
+        [setTotal, operationResolution[1]],
+        [setEquation, [...equation, node]],
+        [setNodesData, operationResolution[0]],
+      ]);
       deselectNodes(operationResolution[0]);
     }
   };
@@ -83,7 +89,7 @@ const GameScreen = ({ target, nodes }) => {
   const onNodePress = node => {
     if (isValidNodePress(node)) {
       const pressedNode = toggledNode(node);
-      setNodesData(nodesWithUpdatedNode(pressedNode));
+      updateGameState([[setNodesData, nodesWithUpdatedNode(pressedNode)]]);
 
       const pressHasDeselectedNode = pressedNode.selected === false;
 
@@ -97,10 +103,42 @@ const GameScreen = ({ target, nodes }) => {
 
   const onOperatorButtonPress = operator => {
     if (equation.length === 1) {
-      setEquation([...equation, operator]);
+      updateGameState([[setEquation, [...equation, operator]]]);
     } else if (equation.length === 2) {
-      setEquation([equation[0], operator]);
+      updateGameState([[setEquation, [equation[0], operator]]]);
     }
+  };
+
+  const onUndoButtonPress = () => {
+    const history = [...gameHistory];
+    const previousState = history.pop();
+
+    console.log('previousState', previousState);
+
+    if (previousState && previousState.equation) {
+      setEquation(previousState.equation);
+    }
+
+    if (previousState && previousState.nodesData) {
+      setNodesData(previousState.nodesData);
+    }
+
+    if (previousState && previousState.hasOwnProperty('total')) {
+      setTotal(previousState.total);
+    }
+
+    setGameHistory(history);
+  };
+
+  /* takes array of arrays */
+  const updateGameState = setStateFunctionsAndData => {
+    snapshotCurrentState();
+    setStateFunctionsAndData.forEach(([setStateFunction, data]) => setStateFunction(data));
+  };
+
+  const snapshotCurrentState = () => {
+    const newHistory = [...gameHistory, { equation, nodesData, total }];
+    setGameHistory(newHistory);
   };
 
   return (
@@ -114,7 +152,7 @@ const GameScreen = ({ target, nodes }) => {
         </View>
         <View>
           <PauseButton style={styles.pauseButton} />
-          <UndoButton />
+          <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
       <View style={styles.nodesContainer}>
