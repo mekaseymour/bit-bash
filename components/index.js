@@ -4,6 +4,7 @@ import EquationDisplay from './EquationDisplay';
 import MultiplyButton from './MultiplyButton';
 import NumberNode from './NumberNode';
 import PauseButton from './PauseButton';
+import PauseModal from './PauseModal';
 import SubtractButton from './SubtractButton';
 import UndoButton from './UndoButton';
 
@@ -14,6 +15,7 @@ export {
   MultiplyButton,
   NumberNode,
   PauseButton,
+  PauseModal,
   SubtractButton,
   UndoButton,
 };

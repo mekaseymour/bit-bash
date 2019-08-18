@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Colors, Typography } from '../styles';
 
@@ -10,6 +10,7 @@ import {
   MultiplyButton,
   NumberNode,
   PauseButton,
+  PauseModal,
   SubtractButton,
   UndoButton,
 } from '../components';
@@ -23,6 +24,7 @@ const GameScreen = ({ target, nodes }) => {
   const [nodesData, setNodesData] = useState(nodes);
   const [total, setTotal] = useState(null);
   const [gameHistory, setGameHistory] = useState([]);
+  const [gamePaused, setGamePaused] = useState(false);
 
   // add selected property to nodes
   useEffect(() => {
@@ -49,6 +51,9 @@ const GameScreen = ({ target, nodes }) => {
     nodes[positionOfNodeToUpdate] = node;
     return nodes;
   };
+
+  const pauseGame = () => setGamePaused(true);
+  const resumeGame = () => setGamePaused(false);
 
   const deselectNodes = nodes =>
     updateGameState([
@@ -143,6 +148,7 @@ const GameScreen = ({ target, nodes }) => {
 
   return (
     <View style={styles.container}>
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => {}} />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View>
@@ -151,7 +157,7 @@ const GameScreen = ({ target, nodes }) => {
           <EquationDisplay equation={equation} />
         </View>
         <View>
-          <PauseButton style={styles.pauseButton} />
+          <PauseButton style={styles.pauseButton} onPress={pauseGame} />
           <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
