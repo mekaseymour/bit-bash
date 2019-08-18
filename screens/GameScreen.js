@@ -7,6 +7,8 @@ import {
   AddButton,
   DivideButton,
   EquationDisplay,
+  GameLostModal,
+  GameWonModal,
   MultiplyButton,
   NumberNode,
   PauseButton,
@@ -25,6 +27,8 @@ const GameScreen = ({ target, nodes }) => {
   const [total, setTotal] = useState(null);
   const [gameHistory, setGameHistory] = useState([]);
   const [gamePaused, setGamePaused] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [gameLost, setGameLost] = useState(false);
 
   // add selected property to nodes
   useEffect(() => {
@@ -54,6 +58,8 @@ const GameScreen = ({ target, nodes }) => {
 
   const pauseGame = () => setGamePaused(true);
   const resumeGame = () => setGamePaused(false);
+  const winGame = () => setGameWon(true);
+  const loseGame = () => setGameLost(true);
 
   const deselectNodes = nodes =>
     updateGameState([
@@ -81,13 +87,29 @@ const GameScreen = ({ target, nodes }) => {
     } else if (equationIsExpectingRightOperand()) {
       // evalutate equation, update nodes, set total to result
       const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
+      const nodesAfterOperation = operationResolution[0];
 
       updateGameState([
         [setTotal, operationResolution[1]],
         [setEquation, [...equation, node]],
-        [setNodesData, operationResolution[0]],
+        [setNodesData, nodesAfterOperation],
       ]);
-      deselectNodes(operationResolution[0]);
+      deselectNodes(nodesAfterOperation);
+      checkForWinningState(nodesAfterOperation);
+    }
+  };
+
+  const checkForWinningState = remainingNodes => {
+    const oneNodeRemaining = remainingNodes.length === 1;
+
+    if (oneNodeRemaining) {
+      const remainingNode = remainingNodes[0];
+
+      if (remainingNode.num === target) {
+        winGame();
+      } else {
+        loseGame();
+      }
     }
   };
 
@@ -118,8 +140,6 @@ const GameScreen = ({ target, nodes }) => {
     const history = [...gameHistory];
     const previousState = history.pop();
 
-    console.log('previousState', previousState);
-
     if (previousState && previousState.equation) {
       setEquation(previousState.equation);
     }
@@ -149,6 +169,8 @@ const GameScreen = ({ target, nodes }) => {
   return (
     <View style={styles.container}>
       <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => {}} />
+      <GameLostModal visible={gameLost} />
+      <GameWonModal visible={gameWon} />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View>
