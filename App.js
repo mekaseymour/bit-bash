@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 
 import GameScreen from './screens/GameScreen';
+import HomeScreen from './screens/HomeScreen';
 import generateNumberNodesData from './helpers/generateNumberNodesData';
 
 function handleLoadingError(error: Error) {
@@ -20,9 +22,19 @@ const loadResourcesAsync = async () => {
   await Promise.all([
     Font.loadAsync({
       bungee: require('./assets/fonts/Bungee-Regular.ttf'),
+      bungeeShade: require('./assets/fonts/BungeeShade-Regular.ttf'),
     }),
   ]);
 };
+
+// <GameScreen target={29} nodes={generateNumberNodesData([29, 1, 1, 24, 3, 19])} />,
+
+const MainNavigator = createSwitchNavigator({
+  Home: HomeScreen,
+  Game: props => <GameScreen {...props} />,
+});
+
+const AppContainer = createAppContainer(MainNavigator);
 
 const App = props => {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -38,7 +50,7 @@ const App = props => {
   } else {
     return (
       <View style={styles.container}>
-        <GameScreen target={29} nodes={generateNumberNodesData([29, 1, 1, 24, 3, 19])} />
+        <AppContainer />
       </View>
     );
   }
