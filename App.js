@@ -6,7 +6,7 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 
 import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
-import generateNumberNodesData from './helpers/generateNumberNodesData';
+import LevelsScreen from './screens/LevelsScreen';
 
 function handleLoadingError(error: Error) {
   // In this case, you might want to report the error to your error reporting
@@ -27,10 +27,9 @@ const loadResourcesAsync = async () => {
   ]);
 };
 
-// <GameScreen target={29} nodes={generateNumberNodesData([29, 1, 1, 24, 3, 19])} />,
-
 const MainNavigator = createSwitchNavigator({
   Home: HomeScreen,
+  Levels: LevelsScreen,
   Game: props => <GameScreen {...props} />,
 });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 import { Modal as ModalStyles } from '../styles';
 
-const GameWonModal = ({ visible }) => (
+const GameWonModal = ({ visible, onHomePress }) => (
   <Modal animationType="fade" transparent={true} visible={visible}>
     <View style={ModalStyles.wrapper}>
       <View style={ModalStyles.contentContainer}>
@@ -12,7 +12,7 @@ const GameWonModal = ({ visible }) => (
         <TouchableOpacity onPress={() => {}}>
           <Image style={ModalStyles.button} source={require('../assets/icons/next-level-button-2x.png')} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={onHomePress}>
           <Image style={ModalStyles.button} source={require('../assets/icons/home-button-2x.png')} />
         </TouchableOpacity>
       </View>

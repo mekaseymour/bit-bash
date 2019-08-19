@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { Button, Colors, Typography } from '../styles';
+import generateNumberNodesData from '../helpers/generateNumberNodesData';
 
 import {
   AddButton,
@@ -21,9 +22,11 @@ import handleNodesOperation from '../helpers/handleNodesOperation';
 const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
 const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
-const GameScreen = ({ target, nodes }) => {
+const GameScreen = ({ navigation }) => {
+  const { target, nodes } = navigation.getParam('game');
+
   const [equation, setEquation] = useState([]);
-  const [nodesData, setNodesData] = useState(nodes);
+  const [nodesData, setNodesData] = useState(generateNumberNodesData(nodes));
   const [total, setTotal] = useState(null);
   const [gameHistory, setGameHistory] = useState([]);
   const [gamePaused, setGamePaused] = useState(false);
@@ -168,9 +171,9 @@ const GameScreen = ({ target, nodes }) => {
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => {}} />
-      <GameLostModal visible={gameLost} />
-      <GameWonModal visible={gameWon} />
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => navigation.navigate('Levels')} />
+      <GameLostModal visible={gameLost} onHomePress={() => navigation.navigate('Home')} />
+      <GameWonModal visible={gameWon} onHomePress={() => navigation.navigate('Home')} />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View>

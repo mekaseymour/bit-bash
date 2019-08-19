@@ -2,7 +2,7 @@ import React from 'react';
 import { Dimensions, ImageBackground, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
 
-const HomeScreen = () => (
+const HomeScreen = props => (
   <View style={styles.wrapper}>
     <ImageBackground
       source={require('../assets/long-background-2x.png')}
@@ -11,7 +11,7 @@ const HomeScreen = () => (
       <View style={styles.container}>
         <Image source={require('../assets/icons/brain-2x.png')} style={styles.icon} />
         <Text style={styles.title}>Number-Mash</Text>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
           <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
         </TouchableOpacity>
       </View>

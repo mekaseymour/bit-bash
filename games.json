@@ -1,0 +1,14 @@
+{
+  "games": [
+    { "target": 8, "nodes": [1, 9] },
+    { "target": 3, "nodes": [3, 0] },
+    { "target": 1, "nodes": [1, 2] },
+    { "target": 9, "nodes": [4, 2, 7] },
+    { "target": 7, "nodes": [10, 2, 5] },
+    { "target": 12, "nodes": [2, 7, 17] },
+    { "target": 12, "nodes": [10, 1, 3] },
+    { "target": 9, "nodes": [2, 3, 10] },
+    { "target": 1, "nodes": [2, 1, 0] },
+    { "target": 3, "nodes": [4, 1, 2] }
+  ]
+}
