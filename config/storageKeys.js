@@ -1,2 +1,2 @@
 export const BRAIN_POWER = 'brainPowerV1';
-export const HIGHEST_LEVEL = 'highestLevelV1';
+export const COMPLETED_LEVELS = 'completedLevelsV1';

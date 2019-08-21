@@ -10,7 +10,7 @@ const GameWonModal = ({ earnedBrainPower, onExitPress, onNextLevelPress, visible
         <Text style={ModalStyles.header}>You did it!</Text>
         <Text style={ModalStyles.subheader}>{`+${earnedBrainPower} Brain Power`}</Text>
         <Image style={{ height: 58, width: 58 }} source={muscleIcon} />
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={onNextLevelPress}>
           <Image style={ModalStyles.button} source={nextLevelButton} />
         </TouchableOpacity>
         <TouchableOpacity onPress={onExitPress}>
