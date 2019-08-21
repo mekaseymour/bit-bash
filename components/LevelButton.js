@@ -6,7 +6,7 @@ const activatedLevelIcon = require('../assets/icons/active-level-2x.png');
 const inactiveLevelIcon = require('../assets/icons/level-button-2x.png');
 
 const LevelButton = ({ level, goToGame, active }) => (
-  <TouchableOpacity onPress={goToGame}>
+  <TouchableOpacity onPress={goToGame} disabled={!active}>
     <ImageBackground source={active ? activatedLevelIcon : inactiveLevelIcon} style={styles.button}>
       <Text style={active ? styles.activeText : styles.inactiveText}>{level}</Text>
     </ImageBackground>
