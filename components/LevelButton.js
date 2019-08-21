@@ -2,10 +2,13 @@ import React from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 
-const LevelButton = ({ level, goToGame }) => (
+const activatedLevelIcon = require('../assets/icons/active-level-2x.png');
+const inactiveLevelIcon = require('../assets/icons/level-button-2x.png');
+
+const LevelButton = ({ level, goToGame, active }) => (
   <TouchableOpacity onPress={goToGame}>
-    <ImageBackground source={require('../assets/icons/level-button-2x.png')} style={styles.button}>
-      <Text style={styles.text}>{level}</Text>
+    <ImageBackground source={active ? activatedLevelIcon : inactiveLevelIcon} style={styles.button}>
+      <Text style={active ? styles.activeText : styles.inactiveText}>{level}</Text>
     </ImageBackground>
   </TouchableOpacity>
 );
@@ -19,10 +22,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 10,
   },
-  text: {
+  inactiveText: {
     ...Typography.mainFont,
     fontSize: 36,
     color: Colors.gray,
+  },
+  activeText: {
+    ...Typography.mainFont,
+    fontSize: 36,
+    color: Colors.darkBlue,
   },
 });
 

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
-import PropTypes from 'prop-types';
 import { Button, Colors, Typography } from '../styles';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
+import handleNodesOperation from '../helpers/handleNodesOperation';
+import saveLevelCompletion from '../helpers/saveLevelCompletion';
+import getEarnedBrainPower from '../helpers/getEarnedBrainPower';
+import saveBrainPower from '../helpers/saveBrainPower';
 
 import {
   AddButton,
@@ -17,13 +20,13 @@ import {
   SubtractButton,
   UndoButton,
 } from '../components';
-import handleNodesOperation from '../helpers/handleNodesOperation';
 
 const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
 const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
-const GameScreen = ({ navigation }) => {
-  const { target, nodes } = navigation.getParam('game');
+const GameScreen = ({ navigation, screenProps }) => {
+  const level = navigation.getParam('game');
+  const { difficulty, target, nodes } = level;
 
   const [equation, setEquation] = useState([]);
   const [nodesData, setNodesData] = useState(generateNumberNodesData(nodes));
@@ -32,6 +35,10 @@ const GameScreen = ({ navigation }) => {
   const [gamePaused, setGamePaused] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [gameLost, setGameLost] = useState(false);
+  const [earnedBrainPower, setEarnedBrainPower] = useState(0);
+
+  // FOR NOW BRAINPOWER SOURCE OF TRUTH COMES FROM LEVELS SCREEN
+  const [totalBrainPower, setTotalBrainPower] = useState(0);
 
   // add selected property to nodes
   useEffect(() => {
@@ -41,7 +48,11 @@ const GameScreen = ({ navigation }) => {
         return node;
       })
     );
+
+    setTotalBrainPower(getTotalIncomingBrainPower());
   }, []);
+
+  const getTotalIncomingBrainPower = () => navigation.getParam('totalBrainPower');
 
   const equationIsExpectingOperator = () => equation.length === 1;
   const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
@@ -110,6 +121,17 @@ const GameScreen = ({ navigation }) => {
 
       if (remainingNode.num === target) {
         winGame();
+        saveLevelCompletion(level.id);
+
+        // should not earn brain power if level was already completed?
+
+        const brainPowerEarnedInLevel = getEarnedBrainPower(difficulty);
+        const newTotalBrainPower = totalBrainPower + brainPowerEarnedInLevel;
+
+        setEarnedBrainPower(brainPowerEarnedInLevel);
+        setTotalBrainPower(newTotalBrainPower);
+
+        saveBrainPower(newTotalBrainPower);
       } else {
         loseGame();
       }
@@ -169,11 +191,21 @@ const GameScreen = ({ navigation }) => {
     setGameHistory(newHistory);
   };
 
+  const navigateToLevelsWithCompletedLevel = () =>
+    navigation.navigate('Levels', { justCompleted: level.id, totalBrainPower });
+
+  const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels', { totalBrainPower });
+
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={() => navigation.navigate('Levels')} />
-      <GameLostModal visible={gameLost} onHomePress={() => navigation.navigate('Home')} />
-      <GameWonModal visible={gameWon} onHomePress={() => navigation.navigate('Home')} />
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
+      <GameLostModal visible={gameLost} onResetPress={() => {}} onExitPress={navigateToLevelsWithoutCompletedLevel} />
+      <GameWonModal
+        visible={gameWon}
+        earnedBrainPower={earnedBrainPower}
+        onNextLevelPress={() => {}}
+        onExitPress={navigateToLevelsWithCompletedLevel}
+      />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View>
@@ -254,11 +286,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-GameScreen.propTypes = {
-  nodes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.number, size: PropTypes.num, num: PropTypes.number }))
-    .isRequired,
-  target: PropTypes.number,
-};
 
 export default GameScreen;

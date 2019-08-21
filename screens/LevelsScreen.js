@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
 import { Colors, Typography } from '../styles';
@@ -7,13 +7,31 @@ var games = require('../games.json');
 
 const LevelsScreen = props => {
   const levels = games['games'];
+  const justCompletedLevel = props.navigation.getParam('justCompleted');
+  const totalBrainPowerFromGame = props.navigation.getParam('totalBrainPower');
+
+  const [highestLevel, setHighestLevel] = useState(props.screenProps.highestLevel);
+  const [brainPower, setBrainPower] = useState(props.screenProps.brainPower);
+
+  useEffect(() => {
+    if (justCompletedLevel && justCompletedLevel > props.screenProps.highestLevel) {
+      setHighestLevel(justCompletedLevel);
+    }
+
+    if (totalBrainPowerFromGame) {
+      setBrainPower(totalBrainPowerFromGame);
+    }
+  }, []);
+
+  const isLevelUnlocked = (highestLevel, currentLevel) => currentLevel <= highestLevel + 1;
 
   const generateLevelsButtons = () => {
     return levels.map((level, i) => (
       <LevelButton
         key={`level-${i + 1}`}
         level={i + 1}
-        goToGame={() => props.navigation.navigate('Game', { game: level })}
+        active={isLevelUnlocked(highestLevel, level.id)}
+        goToGame={() => props.navigation.navigate('Game', { game: level, totalBrainPower: brainPower })}
       />
     ));
   };
@@ -21,7 +39,7 @@ const LevelsScreen = props => {
   return (
     <View style={styles.container}>
       <View style={styles.brainPowerSection}>
-        <Text style={styles.brainPowerText}>{`Brain Power: ${0}`}</Text>
+        <Text style={styles.brainPowerText}>{`Brain Power: ${brainPower}`}</Text>
         <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
       </View>
       <View style={styles.levels}>{generateLevelsButtons()}</View>
