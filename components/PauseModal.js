@@ -7,7 +7,7 @@ const PauseModal = ({ onExitPress, onResumePress, visible }) => (
     <View style={ModalStyles.wrapper}>
       <View style={ModalStyles.contentContainer}>
         <Text style={ModalStyles.header}>Taking a Brain Break</Text>
-        <Image style={ModalStyles.icon} source={require('../assets/icons/brain-2x.png')} />
+        <Image style={{ width: 65, height: 56 }} source={require('../assets/icons/brain-2x.png')} />
         <TouchableOpacity onPress={onResumePress}>
           <Image style={ModalStyles.button} source={require('../assets/icons/resume-button-2x.png')} />
         </TouchableOpacity>
