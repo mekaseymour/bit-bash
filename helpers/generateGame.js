@@ -102,7 +102,7 @@ const generateGame = level => {
     nodes.push(leftChild, rightChild);
   }
 
-  return { id: level, target, nodes, difficulty: difficultyToBuild };
+  return { id: level, target, nums: nodes, difficulty: difficultyToBuild };
 };
 
 export default generateGame;
