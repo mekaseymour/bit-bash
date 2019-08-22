@@ -216,6 +216,14 @@ const GameScreen = ({ navigation, screenProps }) => {
     setGameHistory(newHistory);
   };
 
+  const resetGame = () => {
+    setTotal(null);
+    setEquation([]);
+    setNodesData(gameHistory[0].nodesData);
+    setGameLost(false);
+    setGameHistory([]);
+  };
+
   const navigateToLevelsWithCompletedLevel = () => navigation.navigate('Levels');
   const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
@@ -223,7 +231,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   return (
     <View style={styles.container}>
       <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
-      <GameLostModal visible={gameLost} onResetPress={() => {}} onExitPress={navigateToLevelsWithoutCompletedLevel} />
+      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
       <GameWonModal
         visible={gameWon}
         earnedBrainPower={earnedBrainPower}
