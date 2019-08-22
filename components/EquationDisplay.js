@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     marginTop: 10,
+    width: '100%',
   },
   equationText: {
     ...Typography.mainFont,

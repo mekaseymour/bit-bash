@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Modal, StyleSheet, Text, View } from 'react-native';
 import { StackActions } from 'react-navigation';
 import { Button, Colors, Typography } from '../styles';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
 import handleNodesOperation from '../helpers/handleNodesOperation';
 import getEarnedBrainPower from '../helpers/getEarnedBrainPower';
 import saveBrainPower from '../helpers/saveBrainPower';
-import generateGame from '../helpers/generateGame';
+import generateGame, { DIFFICULTY_CONFIGS } from '../helpers/generateGame';
 import saveCompletedLevel from '../helpers/saveCompletedLevel';
+import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
+
+import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 
 import {
   AddButton,
@@ -39,6 +42,8 @@ const GameScreen = ({ navigation, screenProps }) => {
   const [gameWon, setGameWon] = useState(false);
   const [gameLost, setGameLost] = useState(false);
   const [earnedBrainPower, setEarnedBrainPower] = useState(0);
+  const [isNewLevel] = useState(!levelWasAlreadyWon(context.completedLevels, level));
+  const [operators, setOperators] = useState([]);
 
   useEffect(() => {
     const savedGame = context.completedLevels.find(l => l.id === level);
@@ -53,6 +58,7 @@ const GameScreen = ({ navigation, screenProps }) => {
       })
     );
 
+    setOperators(DIFFICULTY_CONFIGS[difficulty].operators);
     setGame(game);
   }, []);
 
@@ -130,22 +136,24 @@ const GameScreen = ({ navigation, screenProps }) => {
 
       if (remainingNode.num === game.target) {
         winGame();
-        saveCompletedLevel({ ...game, id: level });
 
-        // should not earn brain power if level was already completed?
+        if (isNewLevel) {
+          const updatedCompletedLevels = [...screenProps.context.completedLevels];
+          updatedCompletedLevels.push(game);
 
-        const brainPowerEarnedInLevel = getEarnedBrainPower(game.difficulty);
-        const newTotalBrainPower = screenProps.context.brainPower + brainPowerEarnedInLevel;
+          screenProps.context.setCompletedLevels(updatedCompletedLevels);
+          saveCompletedLevel({ ...game, id: level });
 
-        setEarnedBrainPower(brainPowerEarnedInLevel);
+          // should not earn brain power if level was already completed?
 
-        screenProps.context.setBrainPower(newTotalBrainPower);
+          const brainPowerEarnedInLevel = getEarnedBrainPower(game.difficulty);
+          const newTotalBrainPower = screenProps.context.brainPower + brainPowerEarnedInLevel;
 
-        const updatedCompletedLevels = [...screenProps.context.completedLevels];
-        updatedCompletedLevels.push(game);
+          setEarnedBrainPower(brainPowerEarnedInLevel);
 
-        screenProps.context.setCompletedLevels(updatedCompletedLevels);
-        saveBrainPower(newTotalBrainPower);
+          screenProps.context.setBrainPower(newTotalBrainPower);
+          saveBrainPower(newTotalBrainPower);
+        }
       } else {
         loseGame();
       }
@@ -221,12 +229,12 @@ const GameScreen = ({ navigation, screenProps }) => {
       />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
-        <View>
+        <View style={styles.topSectionNumbers}>
           <Text style={styles.targetNumber}>{game.target}</Text>
           <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
           <EquationDisplay equation={equation} />
         </View>
-        <View>
+        <View style={styles.topSectionButtons}>
           <PauseButton style={styles.pauseButton} onPress={pauseGame} />
           <UndoButton onPress={onUndoButtonPress} />
         </View>
@@ -246,14 +254,16 @@ const GameScreen = ({ navigation, screenProps }) => {
           ))}
       </View>
       <View style={styles.buttonsContainer}>
-        <AddButton onPress={onOperatorButtonPress} />
-        <SubtractButton onPress={onOperatorButtonPress} />
-        <MultiplyButton onPress={onOperatorButtonPress} />
-        <DivideButton onPress={onOperatorButtonPress} />
+        {operators.includes(ADD) && <AddButton onPress={onOperatorButtonPress} />}
+        {operators.includes(SUBTRACT) && <SubtractButton onPress={onOperatorButtonPress} />}
+        {operators.includes(MULTIPLY) && <MultiplyButton onPress={onOperatorButtonPress} />}
+        {operators.includes(DIVIDE) && <DivideButton onPress={onOperatorButtonPress} />}
       </View>
     </View>
   );
 };
+
+const topSubSectionWidth = Dimensions.get('window').width / 3;
 
 const styles = StyleSheet.create({
   buttonsContainer: {
@@ -277,7 +287,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   placeholder: {
-    width: Button.SMALL_BUTTON.width,
+    width: topSubSectionWidth,
   },
   targetNumber: {
     ...Typography.mainFont,
@@ -286,8 +296,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   topSectionContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  topSectionButtons: {
+    width: topSubSectionWidth,
+    alignItems: 'flex-end',
+    paddingRight: 20,
+  },
+  topSectionNumbers: {
+    width: topSubSectionWidth,
   },
   totalContainer: {
     height: 60,

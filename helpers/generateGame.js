@@ -1,4 +1,5 @@
 import operations, { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
+import getRandomFactorOfOperand from './getRandomFactorOfOperand';
 
 const EASY_OPERATORS = [ADD, SUBTRACT];
 const MEDIUM_OPERATORS = [...EASY_OPERATORS, MULTIPLY, DIVIDE];
@@ -9,7 +10,7 @@ const NOVICE = 2;
 const JUNIOR = 3;
 const INTERMEDIATE = 4;
 
-const DIFFICULTY_CONFIGS = {
+export const DIFFICULTY_CONFIGS = {
   [SUPER_STARTER]: {
     maxTarget: 10,
     numOfNodes: 2,
@@ -42,11 +43,11 @@ const DIFFICULTY_CONFIGS = {
   },
 };
 
-const MAX_LEVEL_FOR_SUPER_STARTER = 3;
+const MAX_LEVEL_FOR_SUPER_STARTER = 2;
 const MAX_LEVEL_FOR_STARTER = MAX_LEVEL_FOR_SUPER_STARTER + 5;
 const MAX_LEVEL_FOR_NOVICE = MAX_LEVEL_FOR_STARTER + 10;
 const MAX_LEVEL_FOR_JUNIOR = MAX_LEVEL_FOR_NOVICE + 10;
-const MAX_LEVEL_FOR_INTERMEDIATE = MAX_LEVEL_FOR_JUNIOR + 10;
+const MAX_LEVEL_FOR_INTERMEDIATE = MAX_LEVEL_FOR_JUNIOR * 10000;
 
 const determineDifficultyToBuild = level => {
   if (level <= MAX_LEVEL_FOR_SUPER_STARTER) {
@@ -84,8 +85,14 @@ const generateGame = level => {
   while (nodes.length !== numOfNodes) {
     const head = nodes[0];
 
-    const secondOperand = chooseRandomSecondOperand(head);
     const operation = chooseRandomOperation(operators);
+    let secondOperand;
+
+    if (operation === operations[DIVIDE]) {
+      secondOperand = getRandomFactorOfOperand(head);
+    } else {
+      secondOperand = chooseRandomSecondOperand(head);
+    }
 
     const leftChild = secondOperand;
 
