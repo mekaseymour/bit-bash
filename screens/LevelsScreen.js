@@ -3,48 +3,56 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
 import { Colors, Typography } from '../styles';
 
-var games = require('../games.json');
+const MAX_LEVELS_TO_SHOW = 30;
 
 const LevelsScreen = props => {
-  const levels = games['games'];
-  const justCompletedLevel = props.navigation.getParam('justCompleted');
-  const totalBrainPowerFromGame = props.navigation.getParam('totalBrainPower');
+  const skipToLevel = props.navigation.getParam('skipToLevel');
 
-  const [highestLevel, setHighestLevel] = useState(props.screenProps.highestLevel);
-  const [brainPower, setBrainPower] = useState(props.screenProps.brainPower);
+  const [savedLevels, setSavedLevels] = useState(props.screenProps.context.completedLevels);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (justCompletedLevel && justCompletedLevel > props.screenProps.highestLevel) {
-      setHighestLevel(justCompletedLevel);
-    }
-
-    if (totalBrainPowerFromGame) {
-      setBrainPower(totalBrainPowerFromGame);
+    if (skipToLevel) {
+      navigateToGame(skipToLevel);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
-  const isLevelUnlocked = (highestLevel, currentLevel) => currentLevel <= highestLevel + 1;
+  const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
+  const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
 
   const generateLevelsButtons = () => {
-    return levels.map((level, i) => (
-      <LevelButton
-        key={`level-${i + 1}`}
-        level={i + 1}
-        active={isLevelUnlocked(highestLevel, level.id)}
-        goToGame={() => props.navigation.navigate('Game', { game: level, totalBrainPower: brainPower })}
-      />
-    ));
+    return Array(MAX_LEVELS_TO_SHOW)
+      .fill()
+      .map((level, i) => {
+        const levelNum = i + 1;
+        const saved = savedLevels.find(l => l.id === levelNum);
+
+        return (
+          <LevelButton
+            key={`level-${levelNum}`}
+            level={levelNum}
+            active={isLevelUnlocked(savedLevels, levelNum)}
+            goToGame={() => navigateToGame(levelNum, saved)}
+          />
+        );
+      });
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.brainPowerSection}>
-        <Text style={styles.brainPowerText}>{`Brain Power: ${brainPower}`}</Text>
-        <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+  if (isLoading) {
+    return null;
+  } else {
+    return (
+      <View style={styles.container}>
+        <View style={styles.brainPowerSection}>
+          <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
+          <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+        </View>
+        <View style={styles.levels}>{generateLevelsButtons()}</View>
       </View>
-      <View style={styles.levels}>{generateLevelsButtons()}</View>
-    </View>
-  );
+    );
+  }
 };
 
 const styles = StyleSheet.create({

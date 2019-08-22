@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { AsyncStorage, StyleSheet, Text, View } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
@@ -8,9 +8,10 @@ import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
 
-import { BRAIN_POWER, HIGHEST_LEVEL } from './config/storageKeys';
+import { BRAIN_POWER, COMPLETED_LEVELS } from './config/storageKeys';
 
-// AsyncStorage.removeItem(HIGHEST_LEVEL);
+AsyncStorage.removeItem(BRAIN_POWER);
+AsyncStorage.removeItem(COMPLETED_LEVELS);
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
@@ -34,44 +35,48 @@ const loadResourcesAsync = async (setHighestLevel, setBrainPower) => {
     }),
   ]);
 
-  const highestLevel = await AsyncStorage.getItem(HIGHEST_LEVEL);
   const brainPower = await AsyncStorage.getItem(BRAIN_POWER);
-
-  if (!!highestLevel) {
-    setHighestLevel(parseInt(highestLevel));
-  }
+  const completedLevels = await AsyncStorage.getItem(COMPLETED_LEVELS);
 
   if (!!brainPower) {
     setBrainPower(parseInt(brainPower));
+  }
+
+  if (!!completedLevels) {
+    setCompletedLevels(JSON.parse(completedLevels));
   }
 };
 
 const MainNavigator = createSwitchNavigator({
   Home: HomeScreen,
-  Levels: props => <LevelsScreen {...props} />,
+  Levels: props => <Consumer>{context => <LevelsScreen {...props} />}</Consumer>,
   Game: props => <GameScreen {...props} />,
 });
 
 const AppContainer = createAppContainer(MainNavigator);
 
+const { Provider, Consumer } = createContext();
+
 const App = props => {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-  const [highestLevel, setHighestLevel] = useState(0);
   const [brainPower, setBrainPower] = useState(0);
+  const [completedLevels, setCompletedLevels] = useState([]);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
-        startAsync={() => loadResourcesAsync(setHighestLevel, setBrainPower)}
+        startAsync={() => loadResourcesAsync(setBrainPower, setCompletedLevels)}
         onError={handleLoadingError}
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
     );
   } else {
     return (
-      <View style={styles.container}>
-        <AppContainer screenProps={{ highestLevel, brainPower }} />
-      </View>
+      <Provider value={{ brainPower, setBrainPower, completedLevels, setCompletedLevels }}>
+        <View style={styles.container}>
+          <Consumer>{context => <AppContainer screenProps={{ brainPower, context }} />}</Consumer>
+        </View>
+      </Provider>
     );
   }
 };
