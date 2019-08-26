@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, StyleSheet, Text, View } from 'react-native';
-import { StackActions } from 'react-navigation';
 import { Button, Colors, Typography } from '../styles';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
 import handleNodesOperation from '../helpers/handleNodesOperation';
 import getEarnedBrainPower from '../helpers/getEarnedBrainPower';
 import saveBrainPower from '../helpers/saveBrainPower';
-import generateGame, { DIFFICULTY_CONFIGS } from '../helpers/generateGame';
+import generateGame from '../helpers/generateGame';
+import { DIFFICULTY_CONFIGS } from '../helpers/getGameConfigsForLevel';
 import saveCompletedLevel from '../helpers/saveCompletedLevel';
 import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
@@ -67,9 +67,6 @@ const GameScreen = ({ navigation, screenProps }) => {
       context.setFurthestSeenLevel({ ...game, id: level });
       saveFurthestSeenLevel({ ...game, id: level });
     }
-
-    // console.log('nodesData', nodesData);
-    // console.log('game', game);
   }, []);
 
   const equationIsExpectingOperator = () => equation.length === 1;
@@ -274,7 +271,8 @@ const GameScreen = ({ navigation, screenProps }) => {
   );
 };
 
-const topSubSectionWidth = Dimensions.get('window').width / 3;
+const topSideSectionWidth = Dimensions.get('window').width / 4;
+const topMidSectionWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   buttonsContainer: {
@@ -298,7 +296,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   placeholder: {
-    width: topSubSectionWidth,
+    width: topSideSectionWidth,
   },
   targetNumber: {
     ...Typography.mainFont,
@@ -312,12 +310,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   topSectionButtons: {
-    width: topSubSectionWidth,
+    width: topSideSectionWidth,
     alignItems: 'flex-end',
     paddingRight: 20,
   },
   topSectionNumbers: {
-    width: topSubSectionWidth,
+    width: topMidSectionWidth,
   },
   totalContainer: {
     height: 60,

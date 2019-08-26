@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
+import NextLevelsGroupButton from '../components/NextLevelsGroupButton';
 import { Colors, Typography } from '../styles';
-
-const MAX_LEVELS_TO_SHOW = 30;
+import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
 
 const LevelsScreen = props => {
   const skipToLevel = props.navigation.getParam('skipToLevel');
 
   const [savedLevels, setSavedLevels] = useState(props.screenProps.context.completedLevels);
   const [isLoading, setIsLoading] = useState(true);
+  const [furthestSeenLevel, setFurthestSeenLevel] = useState(null);
 
   useEffect(() => {
     if (skipToLevel) {
@@ -17,13 +18,15 @@ const LevelsScreen = props => {
     } else {
       setIsLoading(false);
     }
+
+    setFurthestSeenLevel(props.screenProps.context.furthestSeenLevel.id || 1);
   }, []);
 
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
 
   const generateLevelsButtons = () => {
-    return Array(MAX_LEVELS_TO_SHOW)
+    return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
       .fill()
       .map((level, i) => {
         const levelNum = i + 1;
@@ -49,7 +52,10 @@ const LevelsScreen = props => {
           <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
           <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
         </View>
-        <View style={styles.levels}>{generateLevelsButtons()}</View>
+        <ScrollView alwaysBounceVertical={true} pagingEnabled={true}>
+          <View style={styles.levels}>{generateLevelsButtons()}</View>
+          <Text style={styles.continuesText}>The Journey Continues...</Text>
+        </ScrollView>
       </View>
     );
   }
@@ -78,6 +84,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: '15%',
     alignItems: 'center',
+  },
+  continuesText: {
+    ...Typography.mainFont,
+    color: Colors.gray,
+    textAlign: 'center',
+    marginTop: 20,
   },
   levels: {
     flexDirection: 'row',

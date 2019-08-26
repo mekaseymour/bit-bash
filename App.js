@@ -10,10 +10,6 @@ import LevelsScreen from './screens/LevelsScreen';
 
 import { BRAIN_POWER, COMPLETED_LEVELS, FURTHEST_SEEN_LEVEL } from './config/storageKeys';
 
-// AsyncStorage.removeItem(BRAIN_POWER);
-// AsyncStorage.removeItem(COMPLETED_LEVELS);
-// AsyncStorage.removeItem(FURTHEST_SEEN_LEVEL);
-
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
