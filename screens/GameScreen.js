@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, StyleSheet, Text, View } from 'react-native';
-import { StackActions } from 'react-navigation';
 import { Button, Colors, Typography } from '../styles';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
 import handleNodesOperation from '../helpers/handleNodesOperation';
 import getEarnedBrainPower from '../helpers/getEarnedBrainPower';
 import saveBrainPower from '../helpers/saveBrainPower';
-import generateGame, { DIFFICULTY_CONFIGS } from '../helpers/generateGame';
+import generateGame from '../helpers/generateGame';
+import { DIFFICULTY_CONFIGS } from '../helpers/getGameConfigsForLevel';
 import saveCompletedLevel from '../helpers/saveCompletedLevel';
 import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
+import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 
@@ -47,12 +48,13 @@ const GameScreen = ({ navigation, screenProps }) => {
 
   useEffect(() => {
     const savedGame = context.completedLevels.find(l => l.id === level);
-    const game = savedGame || generateGame(level);
-    const { difficulty, target, nodes } = game;
+    const furthestSeenLevel = context.furthestSeenLevel.id === level ? context.furthestSeenLevel : null;
+    const game = savedGame || furthestSeenLevel || generateGame(level);
+    const { difficulty, target, nums } = game;
 
     // add selected property to nodes
     setNodesData(
-      generateNumberNodesData(nodes).map(node => {
+      generateNumberNodesData(nums).map(node => {
         node.selected = false;
         return node;
       })
@@ -60,14 +62,12 @@ const GameScreen = ({ navigation, screenProps }) => {
 
     setOperators(DIFFICULTY_CONFIGS[difficulty].operators);
     setGame(game);
-  }, []);
 
-  const setNewGameParams = StackActions.push({
-    params: {
-      level,
-    },
-    key: `level-${level}`,
-  });
+    if (isNewLevel) {
+      context.setFurthestSeenLevel({ ...game, id: level });
+      saveFurthestSeenLevel({ ...game, id: level });
+    }
+  }, []);
 
   const equationIsExpectingOperator = () => equation.length === 1;
   const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
@@ -213,6 +213,14 @@ const GameScreen = ({ navigation, screenProps }) => {
     setGameHistory(newHistory);
   };
 
+  const resetGame = () => {
+    setTotal(null);
+    setEquation([]);
+    setNodesData(gameHistory[0].nodesData);
+    setGameLost(false);
+    setGameHistory([]);
+  };
+
   const navigateToLevelsWithCompletedLevel = () => navigation.navigate('Levels');
   const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
@@ -220,7 +228,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   return (
     <View style={styles.container}>
       <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
-      <GameLostModal visible={gameLost} onResetPress={() => {}} onExitPress={navigateToLevelsWithoutCompletedLevel} />
+      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
       <GameWonModal
         visible={gameWon}
         earnedBrainPower={earnedBrainPower}
@@ -263,7 +271,8 @@ const GameScreen = ({ navigation, screenProps }) => {
   );
 };
 
-const topSubSectionWidth = Dimensions.get('window').width / 3;
+const topSideSectionWidth = Dimensions.get('window').width / 4;
+const topMidSectionWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   buttonsContainer: {
@@ -287,7 +296,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   placeholder: {
-    width: topSubSectionWidth,
+    width: topSideSectionWidth,
   },
   targetNumber: {
     ...Typography.mainFont,
@@ -301,12 +310,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   topSectionButtons: {
-    width: topSubSectionWidth,
+    width: topSideSectionWidth,
     alignItems: 'flex-end',
     paddingRight: 20,
   },
   topSectionNumbers: {
-    width: topSubSectionWidth,
+    width: topMidSectionWidth,
   },
   totalContainer: {
     height: 60,

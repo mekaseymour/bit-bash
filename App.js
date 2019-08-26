@@ -8,10 +8,7 @@ import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
 
-import { BRAIN_POWER, COMPLETED_LEVELS } from './config/storageKeys';
-
-AsyncStorage.removeItem(BRAIN_POWER);
-AsyncStorage.removeItem(COMPLETED_LEVELS);
+import { BRAIN_POWER, COMPLETED_LEVELS, FURTHEST_SEEN_LEVEL } from './config/storageKeys';
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
@@ -27,7 +24,7 @@ const handleFinishLoading = setLoadingComplete => {
   setLoadingComplete(true);
 };
 
-const loadResourcesAsync = async (setHighestLevel, setBrainPower) => {
+const loadResourcesAsync = async (setBrainPower, setCompletedLevels, setFurthestSeenLevel) => {
   await Promise.all([
     Font.loadAsync({
       bungee: require('./assets/fonts/Bungee-Regular.ttf'),
@@ -37,6 +34,7 @@ const loadResourcesAsync = async (setHighestLevel, setBrainPower) => {
 
   const brainPower = await AsyncStorage.getItem(BRAIN_POWER);
   const completedLevels = await AsyncStorage.getItem(COMPLETED_LEVELS);
+  const furthestSeenLevel = await AsyncStorage.getItem(FURTHEST_SEEN_LEVEL);
 
   if (!!brainPower) {
     setBrainPower(parseInt(brainPower));
@@ -44,6 +42,10 @@ const loadResourcesAsync = async (setHighestLevel, setBrainPower) => {
 
   if (!!completedLevels) {
     setCompletedLevels(JSON.parse(completedLevels));
+  }
+
+  if (!!furthestSeenLevel) {
+    setFurthestSeenLevel(JSON.parse(furthestSeenLevel));
   }
 };
 
@@ -61,18 +63,28 @@ const App = props => {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [brainPower, setBrainPower] = useState(0);
   const [completedLevels, setCompletedLevels] = useState([]);
+  const [furthestSeenLevel, setFurthestSeenLevel] = useState({});
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
-        startAsync={() => loadResourcesAsync(setBrainPower, setCompletedLevels)}
+        startAsync={() => loadResourcesAsync(setBrainPower, setCompletedLevels, setFurthestSeenLevel)}
         onError={handleLoadingError}
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
     );
   } else {
     return (
-      <Provider value={{ brainPower, setBrainPower, completedLevels, setCompletedLevels }}>
+      <Provider
+        value={{
+          brainPower,
+          setBrainPower,
+          completedLevels,
+          setCompletedLevels,
+          furthestSeenLevel,
+          setFurthestSeenLevel,
+        }}
+      >
         <View style={styles.container}>
           <Consumer>{context => <AppContainer screenProps={{ brainPower, context }} />}</Consumer>
         </View>

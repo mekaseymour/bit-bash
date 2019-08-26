@@ -2,21 +2,17 @@ import React from 'react';
 import { Dimensions, ImageBackground, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
 
-// <ImageBackground
-//   source={require('../assets/long-background-2x.png')}
-//   style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
-// >
-
 const HomeScreen = props => (
-  <View style={styles.wrapper}>
-    <View style={styles.container}>
-      <Image source={require('../assets/icons/brain-2x.png')} style={styles.icon} />
-      <Text style={styles.title}>Number-Mash</Text>
-      <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
-        <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
-      </TouchableOpacity>
-    </View>
-  </View>
+  <ImageBackground
+    source={require('../assets/tiny-pattern-background-2x.png')}
+    style={{ ...styles.container, width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+  >
+    <Image source={require('../assets/icons/brain-2x.png')} style={styles.icon} />
+    <Text style={styles.title}>Digit-Mash</Text>
+    <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
+      <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
+    </TouchableOpacity>
+  </ImageBackground>
 );
 
 const styles = StyleSheet.create({
@@ -38,11 +34,6 @@ const styles = StyleSheet.create({
     color: Colors.blue,
     fontSize: 55,
     textAlign: 'center',
-  },
-  wrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

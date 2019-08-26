@@ -11,7 +11,7 @@ import operations, {
 import { MIN_NODE_SIZE, MAX_NODE_SIZE } from '../util/nodes';
 
 const updateSize = (left, result) => {
-  const changeInNodeNumber = result / left.num;
+  const changeInNodeNumber = left.num === 0 ? result : result / left.num;
   const newNodeSize = left.size * changeInNodeNumber;
 
   if (newNodeSize < MIN_NODE_SIZE) {
