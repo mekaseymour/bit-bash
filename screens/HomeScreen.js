@@ -1,33 +1,36 @@
 import React from 'react';
 import { Dimensions, ImageBackground, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
+import AnimatedBrain from '../components/AnimatedBrain';
 
 const HomeScreen = props => (
   <ImageBackground
     source={require('../assets/tiny-pattern-background-2x.png')}
     style={{ ...styles.container, width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
   >
-    <Image source={require('../assets/icons/brain-2x.png')} style={styles.icon} />
-    <Text style={styles.title}>Digit-Mash</Text>
-    <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
-      <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
-    </TouchableOpacity>
+    <AnimatedBrain />
+    <View style={styles.titleAndButton}>
+      <Text style={styles.title}>Witty</Text>
+      <Text style={styles.title}>Bits</Text>
+      <Text style={styles.title}>+-×÷=</Text>
+      <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
+        <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
+      </TouchableOpacity>
+    </View>
   </ImageBackground>
 );
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 25,
+    marginTop: 20,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: {
-    height: 70,
-    width: 81,
-    marginBottom: 15,
+  titleAndButton: {
+    marginTop: 30,
   },
   title: {
     ...Typography.fancyFont,
