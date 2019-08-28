@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
 import NextLevelsGroupButton from '../components/NextLevelsGroupButton';
 import { Colors, Typography } from '../styles';
@@ -24,6 +24,7 @@ const LevelsScreen = props => {
 
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
+  const navigateHome = () => props.navigation.navigate('Home');
 
   const generateLevelsButtons = () => {
     return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
@@ -47,10 +48,15 @@ const LevelsScreen = props => {
     return null;
   } else {
     return (
-      <View style={styles.container}>
-        <View style={styles.brainPowerSection}>
-          <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
-          <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+      <View>
+        <View style={styles.topSection}>
+          <TouchableOpacity onPress={navigateHome}>
+            <Image style={styles.homeIcon} source={require('../assets/icons/home-icon-button-2x.png')} />
+          </TouchableOpacity>
+          <View style={styles.brainPowerSection}>
+            <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
+            <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+          </View>
         </View>
         <ScrollView alwaysBounceVertical={true} pagingEnabled={true}>
           <View style={styles.levels}>{generateLevelsButtons()}</View>
@@ -73,23 +79,29 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   brainPowerSection: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  topSection: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginRight: '15%',
-    marginBottom: 10,
-  },
-  container: {
-    flex: 1,
-    marginTop: '15%',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    height: '10%',
+    paddingHorizontal: 20,
   },
   continuesText: {
     ...Typography.mainFont,
     color: Colors.gray,
     textAlign: 'center',
     marginTop: 20,
+    marginBottom: 20,
+  },
+  homeIcon: {
+    height: 45,
+    width: 45,
   },
   levels: {
     flexDirection: 'row',
