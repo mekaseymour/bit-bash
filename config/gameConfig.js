@@ -1,1 +1,1 @@
-export const LEVELS_PER_SECTION = 20;
+export const LEVELS_PER_SECTION = 15;

@@ -240,13 +240,13 @@ const GameScreen = ({ navigation, screenProps }) => {
         <View style={styles.topSectionNumbers}>
           <Text style={styles.targetNumber}>{game.target}</Text>
           <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
-          <EquationDisplay equation={equation} />
         </View>
         <View style={styles.topSectionButtons}>
           <PauseButton style={styles.pauseButton} onPress={pauseGame} />
           <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
+      <EquationDisplay equation={equation} />
       <View style={styles.nodesContainer}>
         {!!nodesData &&
           nodesData.map((data, i) => (
