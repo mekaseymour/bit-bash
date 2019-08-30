@@ -158,9 +158,12 @@ const GameScreen = ({ navigation, screenProps }) => {
 
           // check for section completion and navigate to levels screen with modal if true
           if (level % LEVELS_PER_SECTION === 0) {
+            const nextGame = generateGame(level + 1);
+            context.setFurthestSeenLevel({ ...nextGame, id: level + 1 });
             navigateToLevelsWithCompletedSection();
           }
         }
+        context.setFurthestSeenLevel({ ...game, id: level });
       } else {
         loseGame();
       }

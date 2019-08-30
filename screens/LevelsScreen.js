@@ -121,8 +121,7 @@ const styles = StyleSheet.create({
     ...Typography.mainFont,
     color: Colors.gray,
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
+    marginVertical: 30,
   },
   homeIcon: {
     height: 45,

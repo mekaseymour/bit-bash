@@ -18,7 +18,20 @@ const generateNumberNodesData = nums => {
     } else if (i === largestNumPosition || num === largestNum) {
       return { id: i + 1, size: maxNodeSize, num };
     } else {
-      return { id: i + 1, size: calculateNodeSize(num / numbersRange), num };
+      /* this should technically eventually use the same logic as
+      in updateNodeSize.js - may need to switch this to a for loop to get it to work though */
+      const calculatedSize = calculateNodeSize(num / numbersRange);
+      let nodeSize;
+
+      if (calculatedSize > maxNodeSize) {
+        nodeSize = maxNodeSize;
+      } else if (calculatedSize < minNodeSize) {
+        nodeSize = minNodeSize;
+      } else {
+        nodeSize = calculatedSize;
+      }
+
+      return { id: i + 1, size: nodeSize, num };
     }
   });
 };

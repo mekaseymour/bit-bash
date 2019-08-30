@@ -10,7 +10,7 @@ const HomeScreen = props => (
   >
     <AnimatedBrain />
     <View style={styles.titleAndButton}>
-      <Text style={styles.title}>Bit-</Text>
+      <Text style={styles.title}>Bit</Text>
       <Text style={styles.title}>Bash</Text>
       <Text style={styles.title}>+-×÷=</Text>
       <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>

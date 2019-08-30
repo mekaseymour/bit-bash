@@ -17,3 +17,12 @@ test('if the number of levels completed is greater than the number of levels all
 
   expect(actual).toEqual(expected);
 });
+
+test('if the number of levels completed is equally divisible by the number of levels per section, return correct number of levels', () => {
+  const numOfLevelsCompleted = 25;
+  const numberOfLevelsPerSection = 25;
+  const actual = getNumOfLevelsToDisplay(numOfLevelsCompleted, numberOfLevelsPerSection);
+  const expected = 50;
+
+  expect(actual).toEqual(expected);
+});
