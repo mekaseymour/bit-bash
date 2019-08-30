@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
-import NextLevelsGroupButton from '../components/NextLevelsGroupButton';
 import { Colors, Typography } from '../styles';
 import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
+import CompletedSectionModal from '../components/CompletedSectionModal';
+import saveBrainPower from '../helpers/saveBrainPower';
+import { BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION } from '../config/gameConfig';
 
 const LevelsScreen = props => {
   const skipToLevel = props.navigation.getParam('skipToLevel');
+  const sectionCompleted = props.navigation.getParam('completedSection');
 
   const [savedLevels, setSavedLevels] = useState(props.screenProps.context.completedLevels);
   const [isLoading, setIsLoading] = useState(true);
   const [furthestSeenLevel, setFurthestSeenLevel] = useState(null);
+  const [showCompletedSectionModal, setShowCompletedSectionModal] = useState(false);
 
   useEffect(() => {
     if (skipToLevel) {
@@ -19,12 +23,29 @@ const LevelsScreen = props => {
       setIsLoading(false);
     }
 
+    if (sectionCompleted) {
+      setShowCompletedSectionModal(true);
+    }
+
     setFurthestSeenLevel(props.screenProps.context.furthestSeenLevel.id || 1);
   }, []);
 
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
   const navigateHome = () => props.navigation.navigate('Home');
+  const hideCompletedSectionModal = () => setShowCompletedSectionModal(false);
+
+  const awardSectionCompletedBrainPower = () => {
+    const newTotalBrainPower = props.screenProps.context.brainPower + BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION;
+
+    props.screenProps.context.setBrainPower(newTotalBrainPower);
+    saveBrainPower(newTotalBrainPower);
+  };
+
+  const onSectionCompletedModalClose = () => {
+    awardSectionCompletedBrainPower();
+    hideCompletedSectionModal();
+  };
 
   const generateLevelsButtons = () => {
     return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
@@ -49,6 +70,7 @@ const LevelsScreen = props => {
   } else {
     return (
       <View>
+        <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
         <View style={styles.topSection}>
           <TouchableOpacity onPress={navigateHome}>
             <Image style={styles.homeIcon} source={require('../assets/icons/home-icon-button-2x.png')} />

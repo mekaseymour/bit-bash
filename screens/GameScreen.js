@@ -13,6 +13,7 @@ import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
+import { LEVELS_PER_SECTION } from '../config/gameConfig';
 
 import {
   AddButton,
@@ -154,6 +155,11 @@ const GameScreen = ({ navigation, screenProps }) => {
 
           screenProps.context.setBrainPower(newTotalBrainPower);
           saveBrainPower(newTotalBrainPower);
+
+          // check for section completion and navigate to levels screen with modal if true
+          if (level % LEVELS_PER_SECTION === 0) {
+            navigateToLevelsWithCompletedSection();
+          }
         }
       } else {
         loseGame();
@@ -225,6 +231,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   const navigateToLevelsWithCompletedLevel = () => navigation.navigate('Levels');
   const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
+  const navigateToLevelsWithCompletedSection = () => navigation.navigate('Levels', { completedSection: true });
 
   return (
     <View style={styles.container}>

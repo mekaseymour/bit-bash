@@ -2,8 +2,7 @@ import { getMaxNodeSize } from '../util/nodes';
 
 const generateNumberNodesData = nums => {
   const maxNodeSize = getMaxNodeSize(nums.length);
-  console.log('maxNodeSize', maxNodeSize);
-  const minNodeSize = maxNodeSize / 2;
+  const minNodeSize = Math.floor(maxNodeSize / 2);
   const RANGE = maxNodeSize - minNodeSize;
   const calculateNodeSize = relativeSize => minNodeSize + Math.round(RANGE * relativeSize);
 
