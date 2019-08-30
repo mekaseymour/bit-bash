@@ -1,6 +1,6 @@
-import { MIN_NODE_SIZE, MAX_NODE_SIZE } from '../util/nodes';
+import { getMaxNodeSize } from '../util/nodes';
 
-const updateNodeSize = (result, remainingNodes, leftSideNode) => {
+const updateNodeSize = (result, remainingNodes, leftSideNode, maxNodeSize) => {
   const resultObj = { id: 'result', num: result };
   const sortedByNums = [...remainingNodes, resultObj].sort((a, b) => a.num - b.num);
   const resultPosition = sortedByNums.findIndex(n => n.id === 'result');
@@ -17,9 +17,9 @@ const updateNodeSize = (result, remainingNodes, leftSideNode) => {
   } else if (resultNodeHasSameValueAsRightNode) {
     return nodeToRightOfResult.size;
   } else if (resultIsNewSmallestValue) {
-    return MIN_NODE_SIZE;
+    return Math.floor(maxNodeSize / 2);
   } else if (resultIsNewLargestValue) {
-    return MAX_NODE_SIZE;
+    return maxNodeSize;
   } else {
     const neighboringNodesSizeRange = nodeToRightOfResult.size - nodeToLeftOfResult.size;
     const neighboringNodesNumRange = nodeToRightOfResult.num - nodeToLeftOfResult.num;

@@ -12,6 +12,7 @@ import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
+import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
 
 import {
   AddButton,
@@ -26,9 +27,6 @@ import {
   SubtractButton,
   UndoButton,
 } from '../components';
-
-const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
-const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
 const GameScreen = ({ navigation, screenProps }) => {
   const context = screenProps.context;
@@ -45,6 +43,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   const [earnedBrainPower, setEarnedBrainPower] = useState(0);
   const [isNewLevel] = useState(!levelWasAlreadyWon(context.completedLevels, level));
   const [operators, setOperators] = useState([]);
+  const [maxNodeSize, setMaxNodeSize] = useState(0);
 
   useEffect(() => {
     const savedGame = context.completedLevels.find(l => l.id === level);
@@ -67,6 +66,8 @@ const GameScreen = ({ navigation, screenProps }) => {
       context.setFurthestSeenLevel({ ...game, id: level });
       saveFurthestSeenLevel({ ...game, id: level });
     }
+
+    setMaxNodeSize(getMaxNodeSize(nums.length));
   }, []);
 
   const equationIsExpectingOperator = () => equation.length === 1;
@@ -115,7 +116,7 @@ const GameScreen = ({ navigation, screenProps }) => {
       setEquation([node]);
     } else if (equationIsExpectingRightOperand()) {
       // evalutate equation, update nodes, set total to result
-      const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
+      const operationResolution = handleNodesOperation(nodesData, [...equation, node], maxNodeSize);
       const nodesAfterOperation = operationResolution[0];
 
       updateGameState([

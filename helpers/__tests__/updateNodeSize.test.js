@@ -1,5 +1,4 @@
 import updateNodeSize from '../updateNodeSize';
-import { MIN_NODE_SIZE, MAX_NODE_SIZE } from '../../util/nodes';
 
 test('if result is the new smallest number, return the MIN_NODE_SIZE', () => {
   const result = 10;
@@ -7,7 +6,7 @@ test('if result is the new smallest number, return the MIN_NODE_SIZE', () => {
   const leftSideNode = { id: 2, num: 5, size: 80 };
 
   const actual = updateNodeSize(result, remainingNodes, leftSideNode);
-  const expected = MIN_NODE_SIZE;
+  const expected = 0;
 
   expect(actual).toEqual(expected);
 });
@@ -18,7 +17,7 @@ test('if result is the new largest number, return the MAX_NODE_SIZE', () => {
   const leftSideNode = { id: 2, num: 10, size: 70 };
 
   const actual = updateNodeSize(result, remainingNodes, leftSideNode);
-  const expected = MAX_NODE_SIZE;
+  const expected = 0;
 
   expect(actual).toEqual(expected);
 });
