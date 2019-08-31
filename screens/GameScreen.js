@@ -42,7 +42,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   const [gameWon, setGameWon] = useState(false);
   const [gameLost, setGameLost] = useState(false);
   const [earnedBrainPower, setEarnedBrainPower] = useState(0);
-  const [isNewLevel] = useState(!levelWasAlreadyWon(context.completedLevels, level));
+  const [levelHasNeverBeforeBeenWon] = useState(!levelWasAlreadyWon(context.completedLevels, level));
   const [operators, setOperators] = useState([]);
   const [maxNodeSize, setMaxNodeSize] = useState(0);
 
@@ -51,6 +51,10 @@ const GameScreen = ({ navigation, screenProps }) => {
     const furthestSeenLevel = context.furthestSeenLevel.id === level ? context.furthestSeenLevel : null;
     const game = savedGame || furthestSeenLevel || generateGame(level);
     const { difficulty, target, nums } = game;
+    const currentGame = { ...game, id: level };
+
+    setGame(currentGame);
+    setOperators(DIFFICULTY_CONFIGS[difficulty].operators);
 
     // add selected property to nodes
     setNodesData(
@@ -60,23 +64,26 @@ const GameScreen = ({ navigation, screenProps }) => {
       })
     );
 
-    setOperators(DIFFICULTY_CONFIGS[difficulty].operators);
-    setGame(game);
-
-    if (isNewLevel) {
-      context.setFurthestSeenLevel({ ...game, id: level });
-      saveFurthestSeenLevel({ ...game, id: level });
+    if (levelHasNeverBeforeBeenWon) {
+      context.setFurthestSeenLevel(currentGame);
+      saveFurthestSeenLevel(currentGame);
     }
 
     setMaxNodeSize(getMaxNodeSize(nums.length));
   }, []);
 
+  const pauseGame = () => setGamePaused(true);
+  const resumeGame = () => setGamePaused(false);
+  const winGame = () => setGameWon(true);
+  const loseGame = () => setGameLost(true);
+
   const equationIsExpectingOperator = () => equation.length === 1;
   const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
   const equationIsExpectingRightOperand = () => equation.length === 2;
 
-  const isValidNodePress = node => !equationIsExpectingOperator() || node.selected;
+  const isFinalLevelInSection = () => level % LEVELS_PER_SECTION === 0;
 
+  const isValidNodePress = node => !equationIsExpectingOperator() || node.selected;
   const toggledNode = node => ({ ...node, selected: !node.selected });
 
   const nodesWithUpdatedNode = node => {
@@ -86,11 +93,6 @@ const GameScreen = ({ navigation, screenProps }) => {
     nodes[positionOfNodeToUpdate] = node;
     return nodes;
   };
-
-  const pauseGame = () => setGamePaused(true);
-  const resumeGame = () => setGamePaused(false);
-  const winGame = () => setGameWon(true);
-  const loseGame = () => setGameLost(true);
 
   const deselectNodes = nodes =>
     updateGameState([
@@ -130,40 +132,50 @@ const GameScreen = ({ navigation, screenProps }) => {
     }
   };
 
+  const addGameToCompletedLevels = () => {
+    const updatedCompletedLevels = [...screenProps.context.completedLevels];
+    updatedCompletedLevels.push(game);
+    screenProps.context.setCompletedLevels(updatedCompletedLevels);
+    saveCompletedLevel(game);
+  };
+
+  const addToTotalEarnedBrainPower = () => {
+    const brainPowerEarnedInLevel = getEarnedBrainPower(game.difficulty);
+    const newTotalBrainPower = screenProps.context.brainPower + brainPowerEarnedInLevel;
+
+    setEarnedBrainPower(brainPowerEarnedInLevel);
+
+    screenProps.context.setBrainPower(newTotalBrainPower);
+    saveBrainPower(newTotalBrainPower);
+  };
+
+  const setNextLevelAsSeen = () => {
+    const nextGame = generateGame(level + 1);
+    context.setFurthestSeenLevel({ ...nextGame, id: level + 1 });
+    navigateToLevelsWithCompletedSection();
+  };
+
   const checkForWinningState = remainingNodes => {
-    const oneNodeRemaining = remainingNodes.length === 1;
+    const onlyOneNodeIsRemaining = remainingNodes.length === 1;
 
-    if (oneNodeRemaining) {
-      const remainingNode = remainingNodes[0];
+    if (onlyOneNodeIsRemaining) {
+      const finalRemainingNode = remainingNodes[0];
+      const finalNodeNumMatchesTargetNum = finalRemainingNode.num === game.target;
 
-      if (remainingNode.num === game.target) {
+      if (finalNodeNumMatchesTargetNum) {
         winGame();
 
-        if (isNewLevel) {
-          const updatedCompletedLevels = [...screenProps.context.completedLevels];
-          updatedCompletedLevels.push(game);
+        if (levelHasNeverBeforeBeenWon) {
+          addGameToCompletedLevels();
 
-          screenProps.context.setCompletedLevels(updatedCompletedLevels);
-          saveCompletedLevel({ ...game, id: level });
+          /* (only updates brain power if level was already completed) */
+          addToTotalEarnedBrainPower();
 
-          // should not earn brain power if level was already completed?
-
-          const brainPowerEarnedInLevel = getEarnedBrainPower(game.difficulty);
-          const newTotalBrainPower = screenProps.context.brainPower + brainPowerEarnedInLevel;
-
-          setEarnedBrainPower(brainPowerEarnedInLevel);
-
-          screenProps.context.setBrainPower(newTotalBrainPower);
-          saveBrainPower(newTotalBrainPower);
-
-          // check for section completion and navigate to levels screen with modal if true
-          if (level % LEVELS_PER_SECTION === 0) {
-            const nextGame = generateGame(level + 1);
-            context.setFurthestSeenLevel({ ...nextGame, id: level + 1 });
-            navigateToLevelsWithCompletedSection();
+          if (isFinalLevelInSection()) {
+            setNextLevelAsSeen();
           }
         }
-        context.setFurthestSeenLevel({ ...game, id: level });
+        context.setFurthestSeenLevel(game);
       } else {
         loseGame();
       }
@@ -231,20 +243,19 @@ const GameScreen = ({ navigation, screenProps }) => {
     setGameHistory([]);
   };
 
-  const navigateToLevelsWithCompletedLevel = () => navigation.navigate('Levels');
-  const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels');
+  const navigateToLevelsScreen = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
   const navigateToLevelsWithCompletedSection = () => navigation.navigate('Levels', { completedSection: true });
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
-      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={navigateToLevelsWithoutCompletedLevel} />
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsScreen} />
+      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={navigateToLevelsScreen} />
       <GameWonModal
         visible={gameWon}
         earnedBrainPower={earnedBrainPower}
         onNextLevelPress={navigateToNextLevel}
-        onExitPress={navigateToLevelsWithCompletedLevel}
+        onExitPress={navigateToLevelsScreen}
       />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
