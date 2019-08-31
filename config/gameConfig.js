@@ -1,2 +1,3 @@
 export const LEVELS_PER_SECTION = 15;
 export const BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION = 25;
+export const LEVELS_BETWEEN_ADS = 4;

@@ -30,22 +30,28 @@ export const DIFFICULTY_CONFIGS = {
     difficulty: 3,
   },
   4: {
-    maxTarget: 20,
+    maxTarget: 10,
     numOfNodes: 3,
     operators: MEDIUM_OPERATORS,
     difficulty: 4,
   },
   5: {
-    maxTarget: 50,
-    numOfNodes: 4,
+    maxTarget: 30,
+    numOfNodes: 3,
     operators: MEDIUM_OPERATORS,
     difficulty: 5,
   },
   6: {
-    maxTarget: 100,
+    maxTarget: 50,
     numOfNodes: 4,
     operators: MEDIUM_OPERATORS,
     difficulty: 6,
+  },
+  7: {
+    maxTarget: 50,
+    numOfNodes: 5,
+    operators: MEDIUM_OPERATORS,
+    difficulty: 7,
   },
 };
 
