@@ -13,7 +13,7 @@ const LevelsScreen = props => {
 
   const [savedLevels, setSavedLevels] = useState(props.screenProps.context.completedLevels);
   const [isLoading, setIsLoading] = useState(true);
-  const [furthestSeenLevel, setFurthestSeenLevel] = useState(null);
+  const [furthestSeenLevel, setFurthestSeenLevel] = useState(props.screenProps.context.furthestSeenLevel.id || 1);
   const [showCompletedSectionModal, setShowCompletedSectionModal] = useState(false);
 
   useEffect(() => {
@@ -26,8 +26,6 @@ const LevelsScreen = props => {
     if (sectionCompleted) {
       setShowCompletedSectionModal(true);
     }
-
-    setFurthestSeenLevel(props.screenProps.context.furthestSeenLevel.id || 1);
   }, []);
 
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;

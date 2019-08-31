@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, StyleSheet, Text, View } from 'react-native';
+import { AdMobInterstitial } from 'expo-ads-admob';
+
 import { Button, Colors, Typography } from '../styles';
 import generateNumberNodesData from '../helpers/generateNumberNodesData';
 import handleNodesOperation from '../helpers/handleNodesOperation';
@@ -13,7 +15,8 @@ import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
-import { LEVELS_PER_SECTION } from '../config/gameConfig';
+import { LEVELS_PER_SECTION, LEVELS_BETWEEN_ADS } from '../config/gameConfig';
+import { GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
 
 import {
   AddButton,
@@ -128,7 +131,7 @@ const GameScreen = ({ navigation, screenProps }) => {
         [setNodesData, nodesAfterOperation],
       ]);
       deselectNodes(nodesAfterOperation);
-      checkForWinningState(nodesAfterOperation);
+      checkForCompletedGame(nodesAfterOperation);
     }
   };
 
@@ -155,29 +158,40 @@ const GameScreen = ({ navigation, screenProps }) => {
     navigateToLevelsWithCompletedSection();
   };
 
-  const checkForWinningState = remainingNodes => {
-    const onlyOneNodeIsRemaining = remainingNodes.length === 1;
+  const gameIsInCompletedState = nodes => nodes.length === 1;
+  const gameIsInWinningState = nodes => gameIsInCompletedState(nodes) && nodes[0].num === game.target;
 
-    if (onlyOneNodeIsRemaining) {
-      const finalRemainingNode = remainingNodes[0];
-      const finalNodeNumMatchesTargetNum = finalRemainingNode.num === game.target;
+  const handleGameCompletion = nodes => {
+    if (gameIsInWinningState(nodes)) {
+      winGame();
 
-      if (finalNodeNumMatchesTargetNum) {
-        winGame();
+      if (levelHasNeverBeforeBeenWon) {
+        addGameToCompletedLevels();
 
-        if (levelHasNeverBeforeBeenWon) {
-          addGameToCompletedLevels();
+        /* (only updates brain power if level was already completed) */
+        addToTotalEarnedBrainPower();
 
-          /* (only updates brain power if level was already completed) */
-          addToTotalEarnedBrainPower();
-
-          if (isFinalLevelInSection()) {
-            setNextLevelAsSeen();
-          }
+        if (isFinalLevelInSection()) {
+          setNextLevelAsSeen();
+        } else {
+          context.setFurthestSeenLevel(game);
         }
-        context.setFurthestSeenLevel(game);
+      }
+    } else {
+      loseGame();
+    }
+  };
+
+  const checkForCompletedGame = remainingNodes => {
+    if (gameIsInCompletedState(remainingNodes)) {
+      context.setLevelsCompletedDuringSession(context.levelsCompletedDuringSession + 1);
+
+      const afterShowAdAction = () => handleGameCompletion(remainingNodes);
+
+      if (shouldShowAd()) {
+        showAd(afterShowAdAction);
       } else {
-        loseGame();
+        handleGameCompletion(remainingNodes);
       }
     }
   };
@@ -241,6 +255,22 @@ const GameScreen = ({ navigation, screenProps }) => {
     setNodesData(gameHistory[0].nodesData);
     setGameLost(false);
     setGameHistory([]);
+  };
+
+  const shouldShowAd = () => {
+    return context.levelsCompletedDuringSession > 0 && context.levelsCompletedDuringSession % LEVELS_BETWEEN_ADS === 0;
+  };
+
+  const showAd = async afterAction => {
+    try {
+      AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+      AdMobInterstitial.setTestDeviceID('EMULATOR');
+      await AdMobInterstitial.requestAdAsync();
+      await AdMobInterstitial.showAdAsync();
+      AdMobInterstitial.addEventListener('interstitialDidClose', afterAction);
+    } catch (error) {
+      console.log('error from showAd', error);
+    }
   };
 
   const navigateToLevelsScreen = () => navigation.navigate('Levels');
