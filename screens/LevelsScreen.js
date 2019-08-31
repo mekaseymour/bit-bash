@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
-import NextLevelsGroupButton from '../components/NextLevelsGroupButton';
 import { Colors, Typography } from '../styles';
 import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
+import CompletedSectionModal from '../components/CompletedSectionModal';
+import saveBrainPower from '../helpers/saveBrainPower';
+import { BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION } from '../config/gameConfig';
 
 const LevelsScreen = props => {
   const skipToLevel = props.navigation.getParam('skipToLevel');
+  const sectionCompleted = props.navigation.getParam('completedSection');
 
   const [savedLevels, setSavedLevels] = useState(props.screenProps.context.completedLevels);
   const [isLoading, setIsLoading] = useState(true);
   const [furthestSeenLevel, setFurthestSeenLevel] = useState(null);
+  const [showCompletedSectionModal, setShowCompletedSectionModal] = useState(false);
 
   useEffect(() => {
     if (skipToLevel) {
@@ -19,11 +23,29 @@ const LevelsScreen = props => {
       setIsLoading(false);
     }
 
+    if (sectionCompleted) {
+      setShowCompletedSectionModal(true);
+    }
+
     setFurthestSeenLevel(props.screenProps.context.furthestSeenLevel.id || 1);
   }, []);
 
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
+  const navigateHome = () => props.navigation.navigate('Home');
+  const hideCompletedSectionModal = () => setShowCompletedSectionModal(false);
+
+  const awardSectionCompletedBrainPower = () => {
+    const newTotalBrainPower = props.screenProps.context.brainPower + BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION;
+
+    props.screenProps.context.setBrainPower(newTotalBrainPower);
+    saveBrainPower(newTotalBrainPower);
+  };
+
+  const onSectionCompletedModalClose = () => {
+    awardSectionCompletedBrainPower();
+    hideCompletedSectionModal();
+  };
 
   const generateLevelsButtons = () => {
     return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
@@ -47,10 +69,16 @@ const LevelsScreen = props => {
     return null;
   } else {
     return (
-      <View style={styles.container}>
-        <View style={styles.brainPowerSection}>
-          <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
-          <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+      <View>
+        <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
+        <View style={styles.topSection}>
+          <TouchableOpacity onPress={navigateHome}>
+            <Image style={styles.homeIcon} source={require('../assets/icons/home-icon-button-2x.png')} />
+          </TouchableOpacity>
+          <View style={styles.brainPowerSection}>
+            <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
+            <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
+          </View>
         </View>
         <ScrollView alwaysBounceVertical={true} pagingEnabled={true}>
           <View style={styles.levels}>{generateLevelsButtons()}</View>
@@ -71,25 +99,33 @@ const styles = StyleSheet.create({
     color: Colors.blue,
     fontSize: 16,
     paddingRight: 10,
+    alignSelf: 'center',
   },
   brainPowerSection: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  topSection: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginRight: '15%',
+    justifyContent: 'space-between',
+    paddingTop: 50,
     marginBottom: 10,
-  },
-  container: {
-    flex: 1,
-    marginTop: '15%',
-    alignItems: 'center',
+    height: '13%',
+    paddingHorizontal: 20,
   },
   continuesText: {
     ...Typography.mainFont,
     color: Colors.gray,
     textAlign: 'center',
-    marginTop: 20,
+    marginVertical: 30,
+  },
+  homeIcon: {
+    height: 45,
+    width: 45,
   },
   levels: {
     flexDirection: 'row',

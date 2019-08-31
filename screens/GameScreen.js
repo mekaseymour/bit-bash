@@ -12,6 +12,8 @@ import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
+import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
+import { LEVELS_PER_SECTION } from '../config/gameConfig';
 
 import {
   AddButton,
@@ -26,9 +28,6 @@ import {
   SubtractButton,
   UndoButton,
 } from '../components';
-
-const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
-const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
 const GameScreen = ({ navigation, screenProps }) => {
   const context = screenProps.context;
@@ -45,6 +44,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   const [earnedBrainPower, setEarnedBrainPower] = useState(0);
   const [isNewLevel] = useState(!levelWasAlreadyWon(context.completedLevels, level));
   const [operators, setOperators] = useState([]);
+  const [maxNodeSize, setMaxNodeSize] = useState(0);
 
   useEffect(() => {
     const savedGame = context.completedLevels.find(l => l.id === level);
@@ -67,6 +67,8 @@ const GameScreen = ({ navigation, screenProps }) => {
       context.setFurthestSeenLevel({ ...game, id: level });
       saveFurthestSeenLevel({ ...game, id: level });
     }
+
+    setMaxNodeSize(getMaxNodeSize(nums.length));
   }, []);
 
   const equationIsExpectingOperator = () => equation.length === 1;
@@ -115,7 +117,7 @@ const GameScreen = ({ navigation, screenProps }) => {
       setEquation([node]);
     } else if (equationIsExpectingRightOperand()) {
       // evalutate equation, update nodes, set total to result
-      const operationResolution = handleNodesOperation(nodesData, [...equation, node]);
+      const operationResolution = handleNodesOperation(nodesData, [...equation, node], maxNodeSize);
       const nodesAfterOperation = operationResolution[0];
 
       updateGameState([
@@ -153,7 +155,15 @@ const GameScreen = ({ navigation, screenProps }) => {
 
           screenProps.context.setBrainPower(newTotalBrainPower);
           saveBrainPower(newTotalBrainPower);
+
+          // check for section completion and navigate to levels screen with modal if true
+          if (level % LEVELS_PER_SECTION === 0) {
+            const nextGame = generateGame(level + 1);
+            context.setFurthestSeenLevel({ ...nextGame, id: level + 1 });
+            navigateToLevelsWithCompletedSection();
+          }
         }
+        context.setFurthestSeenLevel({ ...game, id: level });
       } else {
         loseGame();
       }
@@ -224,6 +234,7 @@ const GameScreen = ({ navigation, screenProps }) => {
   const navigateToLevelsWithCompletedLevel = () => navigation.navigate('Levels');
   const navigateToLevelsWithoutCompletedLevel = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
+  const navigateToLevelsWithCompletedSection = () => navigation.navigate('Levels', { completedSection: true });
 
   return (
     <View style={styles.container}>
@@ -240,13 +251,13 @@ const GameScreen = ({ navigation, screenProps }) => {
         <View style={styles.topSectionNumbers}>
           <Text style={styles.targetNumber}>{game.target}</Text>
           <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
-          <EquationDisplay equation={equation} />
         </View>
         <View style={styles.topSectionButtons}>
           <PauseButton style={styles.pauseButton} onPress={pauseGame} />
           <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
+      <EquationDisplay equation={equation} />
       <View style={styles.nodesContainer}>
         {!!nodesData &&
           nodesData.map((data, i) => (

@@ -1,3 +1,3 @@
-export const BRAIN_POWER = 'brainPowerV1';
-export const COMPLETED_LEVELS = 'completedLevelsV1';
-export const FURTHEST_SEEN_LEVEL = 'furthestSeenLevelV1';
+export const BRAIN_POWER = 'brainPowerV101';
+export const COMPLETED_LEVELS = 'completedLevelsV101';
+export const FURTHEST_SEEN_LEVEL = 'furthestSeenLevelV101';

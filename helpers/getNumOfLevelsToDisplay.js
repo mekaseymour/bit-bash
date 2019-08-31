@@ -1,11 +1,11 @@
 import { LEVELS_PER_SECTION } from '../config/gameConfig';
 
-const getNumOfLevelsToDisplay = (levelsCompleted, levelsPerSection = LEVELS_PER_SECTION) => {
-  const levelsCompletedToLevelsInSectionRatio = levelsCompleted / levelsPerSection;
+const getNumOfLevelsToDisplay = (levelsSeen, levelsPerSection = LEVELS_PER_SECTION) => {
+  const levelsCompletedToLevelsInSectionRatio = levelsSeen / levelsPerSection;
   if (levelsCompletedToLevelsInSectionRatio < 1) {
     return levelsPerSection;
   } else {
-    return Math.ceil(levelsCompletedToLevelsInSectionRatio) * levelsPerSection;
+    return (Math.floor(levelsCompletedToLevelsInSectionRatio) + 1) * levelsPerSection;
   }
 };
 
