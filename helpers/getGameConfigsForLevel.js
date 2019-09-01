@@ -18,7 +18,7 @@ export const DIFFICULTY_CONFIGS = {
     difficulty: 1,
   },
   2: {
-    maxTarget: 50,
+    maxTarget: 30,
     numOfNodes: 4,
     operators: EASY_OPERATORS,
     difficulty: 2,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
+import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
 const NumberNode = ({ data, onPress, spacing }) => {
   const { num, size, selected } = data;
@@ -20,11 +21,11 @@ const fontSize = num => {
   const digits = String(num).length;
 
   if (digits < 4) {
-    return 30;
+    return IPHONE_8_OR_SMALLER ? 25 : 30;
   } else if (digits === 4 || digits === 5) {
-    return 20;
+    return IPHONE_8_OR_SMALLER ? 15 : 20;
   } else {
-    return 15;
+    return IPHONE_8_OR_SMALLER ? 12 : 15;
   }
 };
 

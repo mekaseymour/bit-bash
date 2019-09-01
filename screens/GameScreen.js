@@ -311,8 +311,8 @@ const GameScreen = ({ navigation, screenProps }) => {
                 data={data}
                 onPress={() => onNodePress(data)}
                 spacing={{
-                  marginVertical: VERTICAL_SPACING,
-                  marginHorizontal: HORIZONTAL_SPACING,
+                  marginHorizontal: data.spacing[0],
+                  marginVertical: data.spacing[1],
                 }}
               />
             ))}
@@ -339,11 +339,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 45,
+    paddingTop: 45,
+    paddingBottom: 15,
     justifyContent: 'space-between',
   },
   nodesContainer: {
-    height: '60%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
