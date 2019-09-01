@@ -303,18 +303,20 @@ const GameScreen = ({ navigation, screenProps }) => {
       </View>
       <EquationDisplay equation={equation} />
       <View style={styles.nodesContainer}>
-        {!!nodesData &&
-          nodesData.map((data, i) => (
-            <NumberNode
-              key={`node=${i}`}
-              data={data}
-              onPress={() => onNodePress(data)}
-              spacing={{
-                marginVertical: VERTICAL_SPACING,
-                marginHorizontal: HORIZONTAL_SPACING,
-              }}
-            />
-          ))}
+        <View style={styles.nodesWrapper}>
+          {!!nodesData &&
+            nodesData.map((data, i) => (
+              <NumberNode
+                key={`node=${i}`}
+                data={data}
+                onPress={() => onNodePress(data)}
+                spacing={{
+                  marginVertical: VERTICAL_SPACING,
+                  marginHorizontal: HORIZONTAL_SPACING,
+                }}
+              />
+            ))}
+        </View>
       </View>
       <View style={styles.buttonsContainer}>
         {operators.includes(ADD) && <AddButton onPress={onOperatorButtonPress} />}
@@ -341,11 +343,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nodesContainer: {
+    height: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nodesWrapper: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '60%',
   },
   pauseButton: {
     marginBottom: 10,
