@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LevelButton from '../components/LevelButton';
 import { Colors, Typography } from '../styles';
 import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
@@ -45,29 +45,39 @@ const LevelsScreen = props => {
     hideCompletedSectionModal();
   };
 
-  const generateLevelsButtons = () => {
+  const generateListData = () => {
     return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
       .fill()
       .map((level, i) => {
         const levelNum = i + 1;
         const saved = savedLevels.find(l => l.id === levelNum);
 
-        return (
-          <LevelButton
-            key={`level-${levelNum}`}
-            level={levelNum}
-            active={isLevelUnlocked(savedLevels, levelNum)}
-            goToGame={() => navigateToGame(levelNum, saved)}
-          />
-        );
+        return {
+          key: `level-${levelNum}`,
+          level: levelNum,
+          active: isLevelUnlocked(savedLevels, levelNum),
+          goToGame: () => navigateToGame(levelNum, saved),
+        };
       });
   };
+
+  const initialRowIndex = () => (furthestSeenLevel > 4 ? Math.floor(furthestSeenLevel / 4) : 1);
 
   if (isLoading) {
     return null;
   } else {
+    const listData = generateListData();
+    listData.push({
+      key: 'continuous-indicator',
+      comp: (
+        <View style={styles.continuousIndicator}>
+          <Text style={styles.continuousIndicatorText}>. . .</Text>
+        </View>
+      ),
+    });
+
     return (
-      <View>
+      <View style={styles.container}>
         <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
         <View style={styles.topSection}>
           <TouchableOpacity onPress={navigateHome}>
@@ -78,10 +88,17 @@ const LevelsScreen = props => {
             <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
           </View>
         </View>
-        <ScrollView alwaysBounceVertical={true} pagingEnabled={true}>
-          <View style={styles.levels}>{generateLevelsButtons()}</View>
-          <Text style={styles.continuesText}>The Journey Continues...</Text>
-        </ScrollView>
+        <FlatList
+          numColumns={4}
+          data={listData}
+          renderItem={({ item }) => {
+            if (item.comp) {
+              return item.comp;
+            } else {
+              return <LevelButton key={item.key} level={item.level} active={item.active} goToGame={item.goToGame} />;
+            }
+          }}
+        />
       </View>
     );
   }
@@ -105,6 +122,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  topSection: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   topSection: {
     width: '100%',
     flexDirection: 'row',
@@ -115,11 +142,18 @@ const styles = StyleSheet.create({
     height: '13%',
     paddingHorizontal: 20,
   },
-  continuesText: {
+  continuousIndicator: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 62,
+    width: 70,
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  continuousIndicatorText: {
     ...Typography.mainFont,
     color: Colors.gray,
     textAlign: 'center',
-    marginVertical: 30,
   },
   homeIcon: {
     height: 45,
