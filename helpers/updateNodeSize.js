@@ -1,4 +1,4 @@
-import { getMaxNodeSize } from '../util/nodes';
+import { getMaxNodeSize, MIN_NODE_SIZE } from '../util/nodes';
 
 const updateNodeSize = (result, remainingNodes, leftSideNode, maxNodeSize) => {
   const resultObj = { id: 'result', num: result };
@@ -17,7 +17,7 @@ const updateNodeSize = (result, remainingNodes, leftSideNode, maxNodeSize) => {
   } else if (resultNodeHasSameValueAsRightNode) {
     return nodeToRightOfResult.size;
   } else if (resultIsNewSmallestValue) {
-    return Math.floor(maxNodeSize / 2);
+    return MIN_NODE_SIZE;
   } else if (resultIsNewLargestValue) {
     return maxNodeSize;
   } else {

@@ -1,8 +1,8 @@
-import { getMaxNodeSize } from '../util/nodes';
+import { getMaxNodeSize, MIN_NODE_SIZE } from '../util/nodes';
 
 const generateNumberNodesData = nums => {
   const maxNodeSize = getMaxNodeSize(nums.length);
-  const minNodeSize = Math.floor(maxNodeSize / 2);
+  const minNodeSize = MIN_NODE_SIZE;
   const RANGE = maxNodeSize - minNodeSize;
   const calculateNodeSize = relativeSize => minNodeSize + Math.round(RANGE * relativeSize);
 

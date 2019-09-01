@@ -1,5 +1,6 @@
 import { Dimensions } from 'react-native';
 
+export const MIN_NODE_SIZE = 80;
 export const VERTICAL_SPACING = Math.floor(Math.random() * 10) + 3;
 export const HORIZONTAL_SPACING = Math.floor(Math.random() * 30) + 3;
 
@@ -20,13 +21,17 @@ export const getMaxNodeSize = numOfNodes => {
 
   const containerSideRequiredBasedOnSmallerSize = smallerContainerSide * numOfNodes;
 
+  let maxSize;
+
   if (containerSideRequiredBasedOnSmallerSize > largerContainerSide) {
     const difference = containerSideRequiredBasedOnSmallerSize - largerContainerSide;
     const differenceSplitBetweenNodes = difference / numOfNodes;
     const largestPossibleSize = smallerContainerSide - differenceSplitBetweenNodes;
 
-    return Math.floor(largestPossibleSize) < 200 ? Math.floor(largestPossibleSize) : 200;
+    maxSize = Math.floor(largestPossibleSize) < 200 ? Math.floor(largestPossibleSize) : 200;
   } else {
-    return Math.floor(containerSideRequiredBasedOnSmallerSize);
+    maxSize = Math.floor(containerSideRequiredBasedOnSmallerSize);
   }
+
+  return maxSize > MIN_NODE_SIZE ? maxSize : MIN_NODE_SIZE;
 };
