@@ -263,16 +263,16 @@ const GameScreen = ({ navigation, screenProps }) => {
     return context.levelsCompletedDuringSession > 0 && context.levelsCompletedDuringSession % LEVELS_BETWEEN_ADS === 0;
   };
 
-  const showAd = async afterAction => {
+  const showAd = async continueGame => {
     try {
       AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
       AdMobInterstitial.setTestDeviceID('EMULATOR');
       await AdMobInterstitial.requestAdAsync();
       await AdMobInterstitial.showAdAsync();
-      AdMobInterstitial.addEventListener('interstitialDidClose', afterAction);
+      AdMobInterstitial.addEventListener('interstitialDidClose', continueGame);
     } catch (error) {
       console.log('error from showAd', error);
-      afterAction();
+      continueGame();
     }
   };
 
