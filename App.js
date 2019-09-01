@@ -8,7 +8,18 @@ import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
 
-import { BRAIN_POWER, COMPLETED_LEVELS, FURTHEST_SEEN_LEVEL } from './config/storageKeys';
+import {
+  BRAIN_POWER,
+  COMPLETED_LEVELS,
+  FURTHEST_SEEN_LEVEL,
+  PREVIOUS_BRAIN_POWER_KEY,
+  PREVIOUS_COMPLETED_LEVELS_KEY,
+  PREVIOUS_FURTHEST_SEEN_LEVEL_KEY,
+} from './config/storageKeys';
+
+AsyncStorage.removeItem(PREVIOUS_BRAIN_POWER_KEY);
+AsyncStorage.removeItem(PREVIOUS_COMPLETED_LEVELS_KEY);
+AsyncStorage.removeItem(PREVIOUS_FURTHEST_SEEN_LEVEL_KEY);
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));

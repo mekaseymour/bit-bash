@@ -73,6 +73,8 @@ const GameScreen = ({ navigation, screenProps }) => {
     }
 
     setMaxNodeSize(getMaxNodeSize(nums.length));
+
+    return () => AdMobInterstitial.removeEventListener('interstitialDidClose');
   }, []);
 
   const pauseGame = () => setGamePaused(true);
@@ -270,6 +272,7 @@ const GameScreen = ({ navigation, screenProps }) => {
       AdMobInterstitial.addEventListener('interstitialDidClose', afterAction);
     } catch (error) {
       console.log('error from showAd', error);
+      afterAction();
     }
   };
 
