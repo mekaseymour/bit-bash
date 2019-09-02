@@ -89,6 +89,7 @@ const LevelsScreen = props => {
           </View>
         </View>
         <FlatList
+          contentContainerStyle={styles.flatListContainer}
           numColumns={4}
           data={listData}
           renderItem={({ item }) => {
@@ -124,7 +125,10 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
+  },
+  flatListContainer: {
+    width: '100%',
+    paddingHorizontal: 10,
   },
   topSection: {
     width: '100%',

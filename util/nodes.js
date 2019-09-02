@@ -2,7 +2,8 @@ import { Dimensions } from 'react-native';
 import { IPHONE_8_OR_SMALLER } from './constants';
 
 export const MIN_NODE_SIZE = IPHONE_8_OR_SMALLER ? 60 : 80;
-export const VERTICAL_SPACING = () => Math.floor(Math.random() * 10) + 3;
+export const VERTICAL_SPACING = () =>
+  IPHONE_8_OR_SMALLER ? Math.floor(Math.random() * 10) + 3 : Math.floor(Math.random() * 20) + 3;
 export const HORIZONTAL_SPACING = () => Math.floor(Math.random() * 40) + 3;
 
 // without considering spacing
