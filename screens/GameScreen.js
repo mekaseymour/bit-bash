@@ -17,6 +17,7 @@ import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
 import { LEVELS_PER_SECTION, LEVELS_BETWEEN_ADS } from '../config/gameConfig';
 import { GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
+import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
 import {
   AddButton,
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 45,
-    paddingBottom: 15,
+    paddingBottom: IPHONE_8_OR_SMALLER ? 15 : 25,
     justifyContent: 'space-between',
   },
   nodesContainer: {

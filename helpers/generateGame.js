@@ -1,11 +1,10 @@
 import operations, { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import getRandomFactorOfOperand from './getRandomFactorOfOperand';
 import getGameConfigsForLevel from './getGameConfigsForLevel';
+import randomNumber from './randomNumber';
+import getOperandForMultiplication from './getOperandForMultiplication';
 
 const roundToTwoDecimals = num => Math.round(num * 100) / 100;
-
-// chose random whole number as target
-const chooseRandomTargetNumber = (max = 50) => Math.floor(Math.random() * max) + 1;
 
 // choose random operation
 const chooseRandomOperation = operators => operations[operators[Math.floor(Math.random() * operators.length)]];
@@ -17,7 +16,7 @@ const generateGame = level => {
   const difficultyToBuild = getGameConfigsForLevel(level);
 
   const { maxTarget, numOfNodes, operators } = difficultyToBuild;
-  const target = chooseRandomTargetNumber(maxTarget);
+  const target = randomNumber(maxTarget);
 
   const nodes = [target];
 
@@ -29,6 +28,8 @@ const generateGame = level => {
 
     if (operation === operations[DIVIDE]) {
       secondOperand = getRandomFactorOfOperand(head);
+    } else if (operation === operations[MULTIPLY]) {
+      secondOperand = getOperandForMultiplication(head);
     } else {
       secondOperand = chooseRandomSecondOperand(head);
     }
