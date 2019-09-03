@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
   flatListContainer: {
     width: '100%',
     paddingHorizontal: 10,
+    alignItems: 'center',
   },
   topSection: {
     width: '100%',
