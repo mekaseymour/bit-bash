@@ -12,6 +12,7 @@ import { DIFFICULTY_CONFIGS } from '../helpers/getGameConfigsForLevel';
 import saveCompletedLevel from '../helpers/saveCompletedLevel';
 import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
+import shouldShowAd from '../helpers/shouldShowAd';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
@@ -75,7 +76,17 @@ const GameScreen = ({ navigation, screenProps }) => {
 
     setMaxNodeSize(getMaxNodeSize(nums.length));
 
-    return () => AdMobInterstitial.removeEventListener('interstitialDidClose');
+    if (shouldShowAd(context)) {
+      AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+      AdMobInterstitial.setTestDeviceID('EMULATOR');
+      requestAd();
+    }
+
+    return () => {
+      AdMobInterstitial.removeEventListener('interstitialDidClose');
+      AdMobInterstitial.removeEventListener('interstitialDidLoad');
+      AdMobInterstitial.removeEventListener('interstitialDidFailToLoad');
+    };
   }, []);
 
   const pauseGame = () => setGamePaused(true);
@@ -187,14 +198,14 @@ const GameScreen = ({ navigation, screenProps }) => {
 
   const checkForCompletedGame = remainingNodes => {
     if (gameIsInCompletedState(remainingNodes)) {
-      context.setLevelsCompletedDuringSession(context.levelsCompletedDuringSession + 1);
+      context.setLevelsPlayedBetweenAds(context.levelsPlayedBetweenAds + 1);
 
-      const afterShowAdAction = () => handleGameCompletion(remainingNodes);
+      const continueGame = () => handleGameCompletion(remainingNodes);
 
-      if (shouldShowAd()) {
-        showAd(afterShowAdAction);
+      if (shouldShowAd(context)) {
+        showAd(continueGame);
       } else {
-        handleGameCompletion(remainingNodes);
+        continueGame();
       }
     }
   };
@@ -260,20 +271,26 @@ const GameScreen = ({ navigation, screenProps }) => {
     setGameHistory([]);
   };
 
-  const shouldShowAd = () => {
-    return context.levelsCompletedDuringSession > 0 && context.levelsCompletedDuringSession % LEVELS_BETWEEN_ADS === 0;
+  const requestAd = async () => {
+    try {
+      await AdMobInterstitial.requestAdAsync();
+    } catch (error) {
+      console.log('requestAd error', error);
+    }
   };
 
-  const showAd = async continueGame => {
+  const showAd = async afterAdAction => {
+    context.setLevelsPlayedBetweenAds(0);
+
     try {
-      AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
-      AdMobInterstitial.setTestDeviceID('EMULATOR');
-      await AdMobInterstitial.requestAdAsync();
       await AdMobInterstitial.showAdAsync();
-      AdMobInterstitial.addEventListener('interstitialDidClose', continueGame);
+
+      AdMobInterstitial.addEventListener('interstitialDidClose', () => {
+        afterAdAction();
+      });
     } catch (error) {
       console.log('error from showAd', error);
-      continueGame();
+      afterAdAction();
     }
   };
 
