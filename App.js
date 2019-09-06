@@ -75,7 +75,7 @@ const App = props => {
   const [brainPower, setBrainPower] = useState(0);
   const [completedLevels, setCompletedLevels] = useState([]);
   const [furthestSeenLevel, setFurthestSeenLevel] = useState({});
-  const [levelsCompletedDuringSession, setLevelsCompletedDuringSession] = useState(0);
+  const [levelsPlayedBetweenAds, setLevelsPlayedBetweenAds] = useState(0);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -95,8 +95,8 @@ const App = props => {
           setCompletedLevels,
           furthestSeenLevel,
           setFurthestSeenLevel,
-          levelsCompletedDuringSession,
-          setLevelsCompletedDuringSession,
+          levelsPlayedBetweenAds,
+          setLevelsPlayedBetweenAds,
         }}
       >
         <View style={styles.container}>
