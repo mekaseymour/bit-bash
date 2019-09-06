@@ -84,8 +84,6 @@ const GameScreen = ({ navigation, screenProps }) => {
 
     return () => {
       AdMobInterstitial.removeEventListener('interstitialDidClose');
-      AdMobInterstitial.removeEventListener('interstitialDidLoad');
-      AdMobInterstitial.removeEventListener('interstitialDidFailToLoad');
     };
   }, []);
 
