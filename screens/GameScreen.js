@@ -16,7 +16,7 @@ import shouldShowAd from '../helpers/shouldShowAd';
 
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { VERTICAL_SPACING, HORIZONTAL_SPACING, getMaxNodeSize } from '../util/nodes';
-import { LEVELS_PER_SECTION, LEVELS_BETWEEN_ADS } from '../config/gameConfig';
+import { BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT, LEVELS_PER_SECTION, LEVELS_BETWEEN_ADS } from '../config/gameConfig';
 import { GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
@@ -26,6 +26,8 @@ import {
   EquationDisplay,
   GameLostModal,
   GameWonModal,
+  HelpButton,
+  HintModal,
   MultiplyButton,
   NumberNode,
   PauseButton,
@@ -50,6 +52,8 @@ const GameScreen = ({ navigation, screenProps }) => {
   const [levelHasNeverBeforeBeenWon] = useState(!levelWasAlreadyWon(context.completedLevels, level));
   const [operators, setOperators] = useState([]);
   const [maxNodeSize, setMaxNodeSize] = useState(0);
+  const [showingHintModal, setShowingHintModal] = useState(false);
+  const [startingBrainPower] = useState(context.brainPower);
 
   useEffect(() => {
     const savedGame = context.completedLevels.find(l => l.id === level);
@@ -91,6 +95,8 @@ const GameScreen = ({ navigation, screenProps }) => {
   const resumeGame = () => setGamePaused(false);
   const winGame = () => setGameWon(true);
   const loseGame = () => setGameLost(true);
+  const showHintModal = () => setShowingHintModal(true);
+  const dismissHintModal = () => setShowingHintModal(false);
 
   const equationIsExpectingOperator = () => equation.length === 1;
   const equationIsExpectingLeftOperand = () => equation.length === 0 || equation.length === 3;
@@ -159,6 +165,17 @@ const GameScreen = ({ navigation, screenProps }) => {
     const newTotalBrainPower = screenProps.context.brainPower + brainPowerEarnedInLevel;
 
     setEarnedBrainPower(brainPowerEarnedInLevel);
+
+    screenProps.context.setBrainPower(newTotalBrainPower);
+    saveBrainPower(newTotalBrainPower);
+  };
+
+  const deductFromTotalBrainPower = amount => {
+    const newTotalBrainPower = screenProps.context.brainPower - amount;
+
+    console.log('earnedBrainPower - amount', earnedBrainPower - amount);
+
+    setEarnedBrainPower(earnedBrainPower - amount);
 
     screenProps.context.setBrainPower(newTotalBrainPower);
     saveBrainPower(newTotalBrainPower);
@@ -292,6 +309,22 @@ const GameScreen = ({ navigation, screenProps }) => {
     }
   };
 
+  const persistGameChanges = game => {
+    context.setFurthestSeenLevel(game);
+    saveFurthestSeenLevel(game);
+  };
+
+  const userHasEnoughBrainPowerForHint = () => context.brainPower >= BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT;
+  const unlockHint = hint => {
+    const updatedHintsUnlocked = game.hintsUnlocked + 1;
+    const gameWithUpdatedHints = { ...game, hintsUnlocked: updatedHintsUnlocked };
+
+    setGame(gameWithUpdatedHints);
+    persistGameChanges(gameWithUpdatedHints);
+
+    deductFromTotalBrainPower(10);
+  };
+
   const navigateToLevelsScreen = () => navigation.navigate('Levels');
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
   const navigateToLevelsWithCompletedSection = () => navigation.navigate('Levels', { completedSection: true });
@@ -300,6 +333,14 @@ const GameScreen = ({ navigation, screenProps }) => {
     <View style={styles.container}>
       <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={navigateToLevelsScreen} />
       <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={navigateToLevelsScreen} />
+      <HintModal
+        hints={game.hints}
+        hintsUnlocked={game.hintsUnlocked}
+        onDismissPress={dismissHintModal}
+        onUnlockHintPress={unlockHint}
+        userHasEnoughBrainPowerForHint={userHasEnoughBrainPowerForHint()}
+        visible={showingHintModal}
+      />
       <GameWonModal
         visible={gameWon}
         earnedBrainPower={earnedBrainPower}
@@ -313,8 +354,9 @@ const GameScreen = ({ navigation, screenProps }) => {
           <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
         </View>
         <View style={styles.topSectionButtons}>
-          <PauseButton style={styles.pauseButton} onPress={pauseGame} />
+          <PauseButton onPress={pauseGame} />
           <UndoButton onPress={onUndoButtonPress} />
+          <HelpButton onPress={showHintModal} />
         </View>
       </View>
       <EquationDisplay equation={equation} />
@@ -391,6 +433,8 @@ const styles = StyleSheet.create({
     width: topSideSectionWidth,
     alignItems: 'flex-end',
     paddingRight: 20,
+    minHeight: 150,
+    justifyContent: 'space-between',
   },
   topSectionNumbers: {
     width: topMidSectionWidth,

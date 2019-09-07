@@ -2,9 +2,9 @@ import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { Button } from '../styles';
 
-const PauseButton = ({ style, onPress }) => (
-  <TouchableOpacity style={style} onPress={onPress}>
-    <Image style={Button.SMALL_BUTTON} source={require('../assets/icons/pause-button-2x.png')} />
+const PauseButton = ({ onPress }) => (
+  <TouchableOpacity style={Button.gameControlsButton} onPress={onPress}>
+    <Image style={{ height: 25, width: 25 }} source={require('../assets/icons/pause-2x.png')} />
   </TouchableOpacity>
 );
 

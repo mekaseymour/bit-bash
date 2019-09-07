@@ -9,15 +9,17 @@ export const button = {
 
 export const contentContainer = {
   backgroundColor: Colors.white,
-  height: 300,
+  height: 'auto',
+  minHeight: 300,
   width: 265,
   borderRadius: 8,
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   alignItems: 'center',
   shadowColor: Colors.black,
   shadowOffset: { width: 0, height: 3 },
   shadowOpacity: 0.5,
   shadowRadius: 5,
+  paddingVertical: 15,
 };
 
 export const header = {
@@ -25,6 +27,7 @@ export const header = {
   color: Colors.blue,
   fontSize: 25,
   textAlign: 'center',
+  marginBottom: 10,
 };
 
 export const subheader = {
