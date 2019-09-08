@@ -21,12 +21,18 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^6.0.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
     "jest": "^24.8.0",
     "jest-tobetype": "^1.2.3",
+    "react-dom": "^16.9.0",
     "reactotron-react-native": "^3.6.5"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFilesAfterEnv": [
+      "./setupTests.js"
+    ]
   },
   "private": true
 }

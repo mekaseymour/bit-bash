@@ -6,6 +6,14 @@ import { getOperatorForDisplay } from '../util/operations';
 
 import { hintIcon } from '../assets';
 
+const NO_AVAILABLE_HINTS_MESSAGE = 'There are no hints available for this level';
+const POINTS_NEEDED_TO_UNLOCK = '(You need 10 points to unlock a hint)';
+const POINTS_NEEDED_TO_UNLOCK_ANOTHER = '(You need 10 points to unlock another hint)';
+
+export const ALL_HINTS_HEADER = 'All The Hints';
+export const NEED_A_HINT_HEADER = 'Need a Hint?';
+export const NEED_ANOTHER_HINT_HEADER = 'Need Another Hint?';
+
 const HintModal = ({
   hints,
   hintsUnlocked,
@@ -29,8 +37,7 @@ const HintModal = ({
 
   const hintsAreAvailableForLevel = hints && hints.length > 0;
   const gameHasSomeUnlockedHints = hintsUnlocked > 0;
-  const allHintsHaveBeenUnlocked = unlockedHints === levelHints.length;
-  const areMoreHintsToUnlock = unlockedHints.length < levelHints.length;
+  const allHintsHaveBeenUnlocked = levelHints.length > 0 && unlockedHints.length === levelHints.length;
 
   const onGetHintPress = () => {
     if (hintsUnlocked) {
@@ -50,24 +57,30 @@ const HintModal = ({
     ));
 
   const headerText = () => {
-    if (!areMoreHintsToUnlock) {
-      return 'All The Hints';
+    if (allHintsHaveBeenUnlocked) {
+      return ALL_HINTS_HEADER;
     } else if (gameHasSomeUnlockedHints) {
-      return 'Need Another Hint?';
+      return NEED_ANOTHER_HINT_HEADER;
     } else {
-      return 'Need a Hint?';
+      return NEED_A_HINT_HEADER;
     }
   };
 
   const getMainHintContent = () => {
     if (!hintsAreAvailableForLevel) {
-      <Text style={styles.bodyText}>There are no hints available for this level</Text>;
+      return (
+        <Text style={styles.bodyText} data-test="no-hints-for-level-message">
+          {NO_AVAILABLE_HINTS_MESSAGE}
+        </Text>
+      );
     } else if (gameHasSomeUnlockedHints) {
       if (!allHintsHaveBeenUnlocked && !userHasEnoughBrainPowerForHint) {
         return (
           <React.Fragment>
             <View>{getHintsDisplay()}</View>
-            <Text style={styles.bodyText}>(You need 10 points to unlock another hint)</Text>
+            <Text style={styles.bodyText} data-test="points-needed-to-unlock-another">
+              {POINTS_NEEDED_TO_UNLOCK_ANOTHER}
+            </Text>
           </React.Fragment>
         );
       } else {
@@ -76,7 +89,9 @@ const HintModal = ({
     } else if (!userHasEnoughBrainPowerForHint) {
       return (
         <React.Fragment>
-          <Text style={styles.bodyText}>(You need 10 points to unlock a hint)</Text>
+          <Text style={styles.bodyText} data-test="points-needed-to-unlock">
+            {POINTS_NEEDED_TO_UNLOCK}
+          </Text>
         </React.Fragment>
       );
     } else {
@@ -85,20 +100,23 @@ const HintModal = ({
   };
 
   const getModalButtons = () => {
-    // if no hints available, all hints have been unlocked, or not enough brain power
     if (!hintsAreAvailableForLevel || allHintsHaveBeenUnlocked || !userHasEnoughBrainPowerForHint) {
       return (
         <React.Fragment>
-          <ModalButton onPress={onDismissPress}>Keep Trying</ModalButton>
+          <ModalButton onPress={onDismissPress} data-test="hint-dismiss-button">
+            Keep Trying
+          </ModalButton>
         </React.Fragment>
       );
     } else {
       return (
         <React.Fragment>
-          <ModalButton onPress={onGetHintPress} type="primary">
+          <ModalButton onPress={onGetHintPress} type="primary" data-test="get-hint-button">
             Hint (-10 Pts)
           </ModalButton>
-          <ModalButton onPress={onDismissPress}>Keep Trying</ModalButton>
+          <ModalButton onPress={onDismissPress} data-test="hint-dismiss-button">
+            Keep Trying
+          </ModalButton>
         </React.Fragment>
       );
     }

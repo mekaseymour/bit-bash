@@ -173,10 +173,6 @@ const GameScreen = ({ navigation, screenProps }) => {
   const deductFromTotalBrainPower = amount => {
     const newTotalBrainPower = screenProps.context.brainPower - amount;
 
-    console.log('earnedBrainPower - amount', earnedBrainPower - amount);
-
-    setEarnedBrainPower(earnedBrainPower - amount);
-
     screenProps.context.setBrainPower(newTotalBrainPower);
     saveBrainPower(newTotalBrainPower);
   };
