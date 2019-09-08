@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import LevelButton from '../components/LevelButton';
+import { BackButton, LevelButton } from '../components';
 import { Colors, Typography } from '../styles';
 import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
 import CompletedSectionModal from '../components/CompletedSectionModal';
@@ -80,9 +80,7 @@ const LevelsScreen = props => {
       <View style={styles.container}>
         <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
         <View style={styles.topSection}>
-          <TouchableOpacity onPress={navigateHome}>
-            <Image style={styles.homeIcon} source={require('../assets/icons/home-icon-button-2x.png')} />
-          </TouchableOpacity>
+          <BackButton onPress={navigateHome} />
           <View style={styles.brainPowerSection}>
             <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
             <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />

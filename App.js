@@ -7,6 +7,7 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
+import PracticeModesScreen from './screens/PracticeModesScreen';
 
 import {
   BRAIN_POWER,
@@ -64,6 +65,7 @@ const MainNavigator = createSwitchNavigator({
   Home: HomeScreen,
   Levels: props => <Consumer>{context => <LevelsScreen {...props} />}</Consumer>,
   Game: props => <GameScreen {...props} />,
+  Practice: props => <PracticeModesScreen {...props} />,
 });
 
 const AppContainer = createAppContainer(MainNavigator);

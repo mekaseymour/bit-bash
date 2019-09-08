@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions, ImageBackground, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors, Typography } from '../styles';
+import { Button, Colors, Typography } from '../styles';
 import AnimatedBrain from '../components/AnimatedBrain';
 
 const HomeScreen = props => (
@@ -10,20 +10,27 @@ const HomeScreen = props => (
   >
     <AnimatedBrain />
     <View style={styles.titleAndButton}>
-      <Text style={styles.title}>Bit</Text>
-      <Text style={styles.title}>Bash</Text>
-      <Text style={styles.title}>+-×÷=</Text>
-      <TouchableOpacity style={styles.button} onPress={() => props.navigation.navigate('Levels')}>
-        <Image source={require('../assets/icons/play-button-2x.png')} style={{ height: 67, width: 280 }} />
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Bi+</Text>
+        <Text style={styles.title}>B×sh</Text>
+      </View>
+      <TouchableOpacity
+        style={Button.wideButton(Colors.green, Colors.darkGreen)}
+        onPress={() => props.navigation.navigate('Levels')}
+      >
+        <Text style={Button.wideButtonText}>Play</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={Button.wideButton(Colors.aquaGreen, Colors.darkAquaGreen)}
+        onPress={() => props.navigation.navigate('Practice')}
+      >
+        <Text style={Button.wideButtonText}>Practice</Text>
       </TouchableOpacity>
     </View>
   </ImageBackground>
 );
 
 const styles = StyleSheet.create({
-  button: {
-    marginTop: 20,
-  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -31,6 +38,9 @@ const styles = StyleSheet.create({
   },
   titleAndButton: {
     marginTop: 30,
+  },
+  titleContainer: {
+    marginBottom: 10,
   },
   title: {
     ...Typography.fancyFont,

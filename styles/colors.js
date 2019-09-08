@@ -1,5 +1,9 @@
+export const aquaBlue = '#61F3D3';
+export const aquaGreen = '#35CEAD';
 export const black = '#000000';
 export const blue = '#4681FF';
+export const darkAquaBlue = '#56D9BC';
+export const darkAquaGreen = '#2FB89A';
 export const darkBlue = '#2F67DC';
 export const darkGreen = '#90E11C';
 export const gray = '#E1E1E1';

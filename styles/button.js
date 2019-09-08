@@ -1,4 +1,5 @@
 import * as Colors from './colors';
+import * as Typography from './typography';
 
 export const OPERATION_BUTTON = {
   height: 75,
@@ -19,3 +20,24 @@ export const gameControlsButton = {
   height: 45,
   width: 50,
 };
+
+export const wideButtonText = {
+  ...Typography.mainFont,
+  color: Colors.blue,
+  fontSize: 36,
+};
+
+export const wideButton = (color, shadowColor) => ({
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 8,
+  shadowOffset: { width: 0, height: 8 },
+  shadowOpacity: 1.0,
+  shadowRadius: 0,
+  backgroundColor: color,
+  shadowColor: shadowColor,
+  height: 58,
+  width: 280,
+  paddingTop: 7,
+  marginBottom: 20,
+});
