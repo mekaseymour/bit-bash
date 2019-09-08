@@ -3,11 +3,13 @@ import getRandomFactorOfOperand from './getRandomFactorOfOperand';
 import getGameConfigsForLevel from './getGameConfigsForLevel';
 import randomNumber from './randomNumber';
 import getOperandForMultiplication from './getOperandForMultiplication';
+import getOppositeOperator from './getOppositeOperator';
+import formatHintForDisplay from './formatHintForDisplay';
 
 const roundToTwoDecimals = num => Math.round(num * 100) / 100;
 
 // choose random operation
-const chooseRandomOperation = operators => operations[operators[Math.floor(Math.random() * operators.length)]];
+const chooseRandomOperator = operators => operators[Math.floor(Math.random() * operators.length)];
 
 // choose random second operand that is less than first operand
 const chooseRandomSecondOperand = firstOperand => Math.floor(Math.random() * firstOperand - 1) + 2;
@@ -19,11 +21,14 @@ const generateGame = level => {
   const target = randomNumber(maxTarget);
 
   const nodes = [target];
+  const hints = [];
 
   while (nodes.length !== numOfNodes) {
     const head = nodes[0];
 
-    const operation = chooseRandomOperation(operators);
+    const operator = chooseRandomOperator(operators);
+
+    const operation = operations[operator];
     let secondOperand;
 
     if (operation === operations[DIVIDE]) {
@@ -35,14 +40,15 @@ const generateGame = level => {
     }
 
     const leftChild = secondOperand;
-
     const rightChild = operation(head, secondOperand);
+
+    hints.unshift(formatHintForDisplay(rightChild, leftChild, getOppositeOperator(operator), head));
 
     nodes.shift();
     nodes.push(leftChild, rightChild);
   }
 
-  return { id: level, target, nums: nodes, difficulty: difficultyToBuild.difficulty };
+  return { id: level, target, nums: nodes, difficulty: difficultyToBuild.difficulty, hints, hintsUnlocked: 0 };
 };
 
 export default generateGame;

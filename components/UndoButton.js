@@ -3,8 +3,8 @@ import { Image, TouchableOpacity } from 'react-native';
 import { Button } from '../styles';
 
 const UndoButton = ({ onPress }) => (
-  <TouchableOpacity onPress={onPress}>
-    <Image style={Button.SMALL_BUTTON} source={require('../assets/icons/undo-button-2x.png')} />
+  <TouchableOpacity style={Button.gameControlsButton} onPress={onPress}>
+    <Image style={{ height: 30, width: 30 }} source={require('../assets/icons/undo-2x.png')} />
   </TouchableOpacity>
 );
 

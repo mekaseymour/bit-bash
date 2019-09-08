@@ -12,7 +12,9 @@ const CompletedSectionModal = ({ visible, onAcknowledgePress }) => (
         <Text style={ModalStyles.subheader}>{`+25 Brain Power`}</Text>
         <Image style={{ height: 65, width: 65, marginVertical: 20 }} source={confettiIcon} />
         <Text style={ModalStyles.subheader}>Not all heroes carry calculators</Text>
-        <ModalButton text="Continue" onPress={onAcknowledgePress} />
+        <ModalButton onPress={onAcknowledgePress} type="primary">
+          Continue
+        </ModalButton>
       </View>
     </View>
   </Modal>
