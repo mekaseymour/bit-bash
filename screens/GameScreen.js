@@ -81,9 +81,7 @@ const GameScreen = ({ navigation, screenProps }) => {
     setMaxNodeSize(getMaxNodeSize(nums.length));
 
     if (shouldShowAd(context)) {
-      AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
-      AdMobInterstitial.setTestDeviceID('EMULATOR');
-      requestAd();
+      configureAndRequestAd();
     }
 
     return () => {
@@ -282,19 +280,24 @@ const GameScreen = ({ navigation, screenProps }) => {
     setGameHistory([]);
   };
 
-  const requestAd = async () => {
-    try {
-      await AdMobInterstitial.requestAdAsync();
-    } catch (error) {
-      console.log('requestAd error', error);
-    }
+  const configureAndRequestAd = async () => {
+    AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+    AdMobInterstitial.setTestDeviceID('EMULATOR');
+    await AdMobInterstitial.requestAdAsync();
   };
 
   const showAd = async afterAdAction => {
     context.setLevelsPlayedBetweenAds(0);
 
     try {
-      await AdMobInterstitial.showAdAsync();
+      const isReady = await AdMobInterstitial.getIsReadyAsync();
+
+      if (isReady) {
+        await AdMobInterstitial.showAdAsync();
+      } else {
+        await configureAndRequestAd();
+        await AdMobInterstitial.showAdAsync();
+      }
 
       AdMobInterstitial.addEventListener('interstitialDidClose', () => {
         afterAdAction();
