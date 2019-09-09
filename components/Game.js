@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { AdMobInterstitial } from 'expo-ads-admob';
 
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 import {
@@ -10,8 +11,10 @@ import {
   handleNodesOperation,
 } from '../helpers';
 import { DIFFICULTY_CONFIGS } from '../helpers/getGameConfigsForLevel';
+import { BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT, BRAIN_POWER_AWARDED_FOR_PRACTICE_GAME } from '../config/gameConfig';
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { getMaxNodeSize } from '../util/nodes';
+import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 
 import {
   AddButton,
@@ -31,7 +34,16 @@ import {
 import { Colors, Typography } from '../styles';
 
 const Game = props => {
-  const { context, game, mode, navigation, onExitScreen, onGameCompleted, onNextGamePress } = props;
+  const {
+    context,
+    game,
+    levelHasNeverBeforeBeenWon,
+    mode,
+    navigation,
+    onExitScreen,
+    onGameWon,
+    onNextGamePress,
+  } = props;
 
   /* GAME ELEMENTS */
   const [gameState, setGameState] = useState(props.game);
@@ -52,6 +64,12 @@ const Game = props => {
   useEffect(() => {
     setupGame(gameState);
     setMaxNodeSize(getMaxNodeSize(gameState.nums.length));
+
+    AdHelpers.configureAndRequestAd();
+
+    return () => {
+      AdMobInterstitial.removeEventListener('interstitialDidClose');
+    };
   }, []);
 
   const setupGame = game => {
@@ -66,12 +84,8 @@ const Game = props => {
     setOperators(DIFFICULTY_CONFIGS[difficulty].operators);
   };
 
-  const userHasEnoughBrainPowerForHint = () => true;
-  const getBrainPowerToAward = () => {
-    if (mode === 'practice') {
-      return 1;
-    }
-  };
+  const userHasEnoughBrainPowerForHint = () =>
+    mode === 'practice' ? true : context.brainPower >= BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT;
 
   /* MODAL BUTTON PRESSES */
   const resumeGame = () => setGamePaused(false);
@@ -79,7 +93,7 @@ const Game = props => {
   const resetGame = () => {
     setTotal(null);
     setEquation([]);
-    setNumbers(history[0].nodes);
+    setNodes(history[0].nodes);
     setGameLost(false);
     setHistory([]);
   };
@@ -95,6 +109,11 @@ const Game = props => {
       persistGameChanges(gameWithUpdatedHints);
       BrainPowerHelpers.deductFromTotalBrainPower(context);
     }
+  };
+
+  const persistGameChanges = game => {
+    context.setFurthestSeenLevel(game);
+    saveFurthestSeenLevel(game);
   };
 
   /* GAME OPTIONS BUTTON PRESS*/
@@ -216,22 +235,35 @@ const Game = props => {
       if (AdHelpers.shouldShowAd(context)) {
         AdHelpers.showAd(continueGame, context);
       } else {
+        context.setLevelsPlayedBetweenAds(context.levelsPlayedBetweenAds + 1);
         continueGame();
       }
     }
   };
 
   const handleGameCompletion = nodes => {
-    onGameCompleted();
-
     if (GameStateHelpers.gameIsInWinningState(gameState, nodes)) {
       winGame();
-      BrainPowerHelpers.addToTotalEarnedBrainPower(
-        context,
-        mode === 'practice' ? 1 : BrainPowerHelpers.getEarnedBrainPower(gameState.difficulty)
-      );
+
+      BrainPowerHelpers.addToTotalEarnedBrainPower(context, getEarnedBrainPower());
+
+      onGameWon();
     } else {
       loseGame();
+    }
+  };
+
+  const inPracticeMode = mode === 'practice';
+
+  const getEarnedBrainPower = () => {
+    if (inPracticeMode) {
+      return BRAIN_POWER_AWARDED_FOR_PRACTICE_GAME;
+    } else {
+      if (levelHasNeverBeforeBeenWon) {
+        return BrainPowerHelpers.getEarnedBrainPower(gameState.difficulty);
+      } else {
+        return 0;
+      }
     }
   };
 
@@ -245,12 +277,12 @@ const Game = props => {
         onDismissPress={dismissHintModal}
         onUnlockHintPress={unlockHint}
         userHasEnoughBrainPowerForHint={userHasEnoughBrainPowerForHint()}
-        mode="practice"
+        mode={mode}
         visible={showingHintModal}
       />
       <GameWonModal
         visible={gameWon}
-        earnedBrainPower={getBrainPowerToAward()}
+        earnedBrainPower={getEarnedBrainPower()}
         onNextLevelPress={onNextGamePress}
         onExitPress={onExitPress}
       />
@@ -262,8 +294,8 @@ const Game = props => {
         </View>
         <View style={styles.topSectionButtons}>
           <PauseButton onPress={pauseGame} />
-          <UndoButton onPress={onUndoButtonPress} />
           <HelpButton onPress={showHintModal} />
+          <UndoButton onPress={onUndoButtonPress} />
         </View>
       </View>
       <EquationDisplay equation={equation} />

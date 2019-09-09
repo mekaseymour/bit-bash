@@ -1,9 +1,15 @@
+import { AdMobInterstitial } from 'expo-ads-admob';
 import shouldShowAd from './shouldShowAd';
+import { GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
 
 const configureAndRequestAd = async () => {
-  AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
-  AdMobInterstitial.setTestDeviceID('EMULATOR');
-  await AdMobInterstitial.requestAdAsync();
+  const isReady = await AdMobInterstitial.getIsReadyAsync();
+
+  if (!isReady) {
+    AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+    AdMobInterstitial.setTestDeviceID('EMULATOR');
+    await AdMobInterstitial.requestAdAsync();
+  }
 };
 
 const showAd = async (afterAdAction, context) => {

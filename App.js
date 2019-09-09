@@ -19,9 +19,9 @@ import {
   PREVIOUS_FURTHEST_SEEN_LEVEL_KEY,
 } from './config/storageKeys';
 
-AsyncStorage.removeItem(BRAIN_POWER);
-AsyncStorage.removeItem(COMPLETED_LEVELS);
-AsyncStorage.removeItem(FURTHEST_SEEN_LEVEL);
+// AsyncStorage.removeItem(BRAIN_POWER);
+// AsyncStorage.removeItem(COMPLETED_LEVELS);
+// AsyncStorage.removeItem(FURTHEST_SEEN_LEVEL);
 AsyncStorage.removeItem(PREVIOUS_BRAIN_POWER_KEY);
 AsyncStorage.removeItem(PREVIOUS_COMPLETED_LEVELS_KEY);
 AsyncStorage.removeItem(PREVIOUS_FURTHEST_SEEN_LEVEL_KEY);
