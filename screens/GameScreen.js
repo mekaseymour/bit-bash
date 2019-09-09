@@ -185,13 +185,16 @@ const GameScreen = ({ navigation, screenProps }) => {
   const gameIsInWinningState = nodes => gameIsInCompletedState(nodes) && nodes[0].num === game.target;
 
   const handleGameCompletion = nodes => {
+    context.setLevelsPlayedBetweenAds(context.levelsPlayedBetweenAds + 1);
+
     if (gameIsInWinningState(nodes)) {
       winGame();
+
+      /* ONGAMEWON */
 
       if (levelHasNeverBeforeBeenWon) {
         addGameToCompletedLevels();
 
-        /* (only updates brain power if level was already completed) */
         addToTotalEarnedBrainPower();
 
         if (isFinalLevelInSection()) {
@@ -200,6 +203,8 @@ const GameScreen = ({ navigation, screenProps }) => {
           context.setFurthestSeenLevel(game);
         }
       }
+
+      /* ^ ONGAMEWON ^ */
     } else {
       loseGame();
     }
@@ -207,8 +212,6 @@ const GameScreen = ({ navigation, screenProps }) => {
 
   const checkForCompletedGame = remainingNodes => {
     if (gameIsInCompletedState(remainingNodes)) {
-      context.setLevelsPlayedBetweenAds(context.levelsPlayedBetweenAds + 1);
-
       const continueGame = () => handleGameCompletion(remainingNodes);
 
       if (shouldShowAd(context)) {

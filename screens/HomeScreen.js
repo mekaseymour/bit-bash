@@ -22,7 +22,7 @@ const HomeScreen = props => (
       </TouchableOpacity>
       <TouchableOpacity
         style={Button.wideButton(Colors.aquaGreen, Colors.darkAquaGreen)}
-        onPress={() => props.navigation.navigate('Practice')}
+        onPress={() => props.navigation.navigate('PracticeModes')}
       >
         <Text style={Button.wideButtonText}>Practice</Text>
       </TouchableOpacity>

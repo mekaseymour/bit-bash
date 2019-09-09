@@ -17,6 +17,7 @@ export const NEED_ANOTHER_HINT_HEADER = 'Need Another Hint?';
 const HintModal = ({
   hints,
   hintsUnlocked,
+  mode,
   onDismissPress,
   onUnlockHintPress,
   userHasEnoughBrainPowerForHint,
@@ -112,7 +113,7 @@ const HintModal = ({
       return (
         <React.Fragment>
           <ModalButton onPress={onGetHintPress} type="primary" data-test="get-hint-button">
-            Hint (-10 Pts)
+            {mode === 'practice' ? `Get Hint` : 'Hint (-10 Pts)'}
           </ModalButton>
           <ModalButton onPress={onDismissPress} data-test="hint-dismiss-button">
             Keep Trying

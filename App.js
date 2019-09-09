@@ -8,6 +8,7 @@ import GameScreen from './screens/GameScreen';
 import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
 import PracticeModesScreen from './screens/PracticeModesScreen';
+import PracticeScreen from './screens/PracticeScreen';
 
 import {
   BRAIN_POWER,
@@ -18,6 +19,9 @@ import {
   PREVIOUS_FURTHEST_SEEN_LEVEL_KEY,
 } from './config/storageKeys';
 
+AsyncStorage.removeItem(BRAIN_POWER);
+AsyncStorage.removeItem(COMPLETED_LEVELS);
+AsyncStorage.removeItem(FURTHEST_SEEN_LEVEL);
 AsyncStorage.removeItem(PREVIOUS_BRAIN_POWER_KEY);
 AsyncStorage.removeItem(PREVIOUS_COMPLETED_LEVELS_KEY);
 AsyncStorage.removeItem(PREVIOUS_FURTHEST_SEEN_LEVEL_KEY);
@@ -65,7 +69,8 @@ const MainNavigator = createSwitchNavigator({
   Home: HomeScreen,
   Levels: props => <Consumer>{context => <LevelsScreen {...props} />}</Consumer>,
   Game: props => <GameScreen {...props} />,
-  Practice: props => <PracticeModesScreen {...props} />,
+  PracticeModes: props => <PracticeModesScreen {...props} />,
+  Practice: props => <PracticeScreen {...props} />,
 });
 
 const AppContainer = createAppContainer(MainNavigator);
