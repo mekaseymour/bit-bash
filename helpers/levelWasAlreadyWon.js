@@ -1,3 +1,5 @@
-const levelWasAlreadyWon = (completedLevels, level) => !!completedLevels.find(l => l.id === level);
+const levelWasAlreadyWon = (completedLevels, level) => {
+  return !!completedLevels.find(l => l.id === level);
+};
 
 export default levelWasAlreadyWon;
