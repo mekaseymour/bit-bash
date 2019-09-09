@@ -14,7 +14,7 @@ import { DIFFICULTY_CONFIGS } from '../helpers/getGameConfigsForLevel';
 import { BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT, BRAIN_POWER_AWARDED_FOR_PRACTICE_GAME } from '../config/gameConfig';
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { getMaxNodeSize } from '../util/nodes';
-import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
+import persistGameChanges from '../helpers/persistGameChanges';
 
 import {
   AddButton,
@@ -106,14 +106,9 @@ const Game = props => {
     setGameState(gameWithUpdatedHints);
 
     if (mode !== 'practice') {
-      persistGameChanges(gameWithUpdatedHints);
+      persistGameChanges(context, gameWithUpdatedHints);
       BrainPowerHelpers.deductFromTotalBrainPower(context);
     }
-  };
-
-  const persistGameChanges = game => {
-    context.setFurthestSeenLevel(game);
-    saveFurthestSeenLevel(game);
   };
 
   /* GAME OPTIONS BUTTON PRESS*/
