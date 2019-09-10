@@ -108,9 +108,11 @@ const CustomizeScreen = props => {
         }}
       />
       <ScreenTopSection backNavigation={navigateHome} brainPower={context.brainPower} />
-      <Text style={styles.header}>Customize Your Game</Text>
-      <View style={styles.optionsContainer}>{buildGrid(renderCustomizationOptions())}</View>
-      <View>{selectedOption ? ctaDisplay() : null}</View>
+      <View style={styles.content}>
+        <Text style={styles.header}>Customize Your Game</Text>
+        <View style={styles.optionsContainer}>{buildGrid(renderCustomizationOptions())}</View>
+        <View style={styles.ctaSection}>{selectedOption ? ctaDisplay() : null}</View>
+      </View>
     </View>
   );
 };
@@ -120,6 +122,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  content: {
+    flex: 1,
+    paddingTop: 10,
+  },
+  ctaSection: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
   header: {
     ...Typography.h2,

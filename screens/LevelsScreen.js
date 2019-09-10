@@ -8,6 +8,8 @@ import saveBrainPower from '../helpers/saveBrainPower';
 import { BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION } from '../config/gameConfig';
 import ScreenTopSection from '../components/ScreenTopSection';
 
+const LEVEL_ICONS_PER_ROW = 4;
+
 const LevelsScreen = props => {
   const skipToLevel = props.navigation.getParam('skipToLevel');
   const sectionCompleted = props.navigation.getParam('completedSection');
@@ -27,7 +29,7 @@ const LevelsScreen = props => {
       let wait = new Promise(resolve => setTimeout(resolve, 200)); // Smaller number should work
       wait.then(() => {
         flatlistRef.current.scrollToIndex({
-          index: props.screenProps.context.furthestSeenLevel.id / 4,
+          index: furthestSeenLevel / LEVEL_ICONS_PER_ROW,
           animated: true,
         });
       });
@@ -71,7 +73,8 @@ const LevelsScreen = props => {
       });
   };
 
-  const initialRowIndex = () => (furthestSeenLevel > 4 ? Math.floor(furthestSeenLevel / 4) : 1);
+  const initialRowIndex = () =>
+    furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1;
 
   if (isLoading) {
     return null;
@@ -92,8 +95,9 @@ const LevelsScreen = props => {
         <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
         <FlatList
           ref={flatlistRef}
+          onScrollToIndexFailed={() => {}}
           contentContainerStyle={styles.flatListContainer}
-          numColumns={4}
+          numColumns={LEVEL_ICONS_PER_ROW}
           data={listData}
           renderItem={({ item }) => {
             if (item.comp) {
