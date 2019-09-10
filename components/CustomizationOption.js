@@ -31,8 +31,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }),
   customizationOption: {
-    margin: 8,
+    margin: 5,
     alignItems: 'center',
+    flex: 1,
   },
   textWrapper: selected => ({
     marginTop: 8,
