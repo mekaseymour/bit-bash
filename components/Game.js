@@ -286,7 +286,9 @@ const Game = props => {
         <View style={styles.placeholder} />
         <View style={styles.topSectionNumbers}>
           <Text style={styles.targetNumber}>{gameState.target}</Text>
-          <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
+          <View style={styles.totalContainer}>
+            {total !== null && <Text style={styles.total(total)}>{total}</Text>}
+          </View>
         </View>
         <View style={styles.topSectionButtons}>
           <PauseButton onPress={pauseGame} />
@@ -380,10 +382,10 @@ const styles = StyleSheet.create({
   totalContainer: {
     height: 60,
   },
-  total: {
+  total: total => ({
     ...Typography.mainFont,
-    ...Typography.large,
     color: Colors.gray,
     textAlign: 'center',
-  },
+    fontSize: String(total).length > 4 ? 45 : Typography.large.fontSize,
+  }),
 });
