@@ -11,7 +11,6 @@ export const gameControlsButton = {
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: 10,
-  shadowOffset: { width: 0, height: 8 },
   shadowOpacity: 1.0,
   shadowRadius: 0,
   shadowOffset: { width: 0, height: 5 },

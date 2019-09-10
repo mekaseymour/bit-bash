@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
@@ -8,17 +8,16 @@ const NumberNode = ({ context, data, onPress, spacing }) => {
   const baseNodeStyles = context.enabledCustomization ? styles.customNumberNode(size) : styles.numberNode(size);
   const nodeStyle = selected ? { ...baseNodeStyles, ...styles.selected } : baseNodeStyles;
 
-  return (
+  return context.enabledCustomization ? (
     <TouchableOpacity style={{ ...spacing, ...nodeStyle }} onPress={onPress} activeOpacity={0.8}>
-      {context.enabledCustomization ? (
-        <ImageBackground source={context.enabledCustomization.icon} style={baseNodeStyles}>
-          <Text style={styles.number(num)}>{num}</Text>
-        </ImageBackground>
-      ) : (
-        <TouchableOpacity style={{ ...spacing, ...nodeStyle }} onPress={onPress} activeOpacity={0.8}>
-          <Text style={styles.number(num)}>{num}</Text>
-        </TouchableOpacity>
-      )}
+      <ImageBackground source={context.enabledCustomization.icon} style={baseNodeStyles}>
+        <Text style={styles.number(num)}>{num}</Text>
+        <View style={{ ...spacing, ...nodeStyle, position: 'absolute' }} />
+      </ImageBackground>
+    </TouchableOpacity>
+  ) : (
+    <TouchableOpacity style={{ ...spacing, ...nodeStyle }} onPress={onPress} activeOpacity={0.8}>
+      <Text style={styles.number(num)}>{num}</Text>
     </TouchableOpacity>
   );
 };

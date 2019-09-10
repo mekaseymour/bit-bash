@@ -103,22 +103,22 @@ const HintModal = ({
   const getModalButtons = () => {
     if (!hintsAreAvailableForLevel || allHintsHaveBeenUnlocked || !userHasEnoughBrainPowerForHint) {
       return (
-        <React.Fragment>
+        <View>
           <ModalButton onPress={onDismissPress} data-test="hint-dismiss-button">
             Keep Trying
           </ModalButton>
-        </React.Fragment>
+        </View>
       );
     } else {
       return (
-        <React.Fragment>
+        <View>
           <ModalButton onPress={onGetHintPress} type="primary" data-test="get-hint-button">
             {mode === 'practice' ? `Get Hint` : 'Hint (-10 Pts)'}
           </ModalButton>
           <ModalButton onPress={onDismissPress} data-test="hint-dismiss-button">
             Keep Trying
           </ModalButton>
-        </React.Fragment>
+        </View>
       );
     }
   };

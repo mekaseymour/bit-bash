@@ -264,8 +264,8 @@ const Game = props => {
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} />
-      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} />
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} mode={mode} />
+      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} mode={mode} />
       <HintModal
         hints={gameState.hints}
         hintsUnlocked={gameState.hintsUnlocked}
@@ -280,12 +280,15 @@ const Game = props => {
         earnedBrainPower={getEarnedBrainPower()}
         onNextLevelPress={onNextGamePress}
         onExitPress={onExitPress}
+        mode={mode}
       />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
         <View style={styles.topSectionNumbers}>
           <Text style={styles.targetNumber}>{gameState.target}</Text>
-          <View style={styles.totalContainer}>{total !== null && <Text style={styles.total}>{total}</Text>}</View>
+          <View style={styles.totalContainer}>
+            {total !== null && <Text style={styles.total(total)}>{total}</Text>}
+          </View>
         </View>
         <View style={styles.topSectionButtons}>
           <PauseButton onPress={pauseGame} />
@@ -379,10 +382,10 @@ const styles = StyleSheet.create({
   totalContainer: {
     height: 60,
   },
-  total: {
+  total: total => ({
     ...Typography.mainFont,
-    ...Typography.large,
     color: Colors.gray,
     textAlign: 'center',
-  },
+    fontSize: String(total).length > 4 ? 45 : Typography.large.fontSize,
+  }),
 });

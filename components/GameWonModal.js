@@ -1,9 +1,10 @@
 import React from 'react';
-import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Text, View } from 'react-native';
 import { Modal as ModalStyles } from '../styles';
 import { exitLevelButton, muscleIcon, nextLevelButton } from '../assets';
+import ModalButton from './ModalButton';
 
-const GameWonModal = ({ earnedBrainPower, onExitPress, onNextLevelPress, visible }) => {
+const GameWonModal = ({ earnedBrainPower, mode, onExitPress, onNextLevelPress, visible }) => {
   const brainPowerMessage = !!earnedBrainPower ? `+${earnedBrainPower} Brain Power` : `(Again)`;
 
   return (
@@ -13,12 +14,10 @@ const GameWonModal = ({ earnedBrainPower, onExitPress, onNextLevelPress, visible
           <Text style={ModalStyles.header}>You did it!</Text>
           <Text style={ModalStyles.subheader}>{brainPowerMessage}</Text>
           <Image style={{ height: 58, width: 58 }} source={muscleIcon} />
-          <TouchableOpacity onPress={onNextLevelPress}>
-            <Image style={ModalStyles.button} source={nextLevelButton} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onExitPress}>
-            <Image style={ModalStyles.button} source={exitLevelButton} />
-          </TouchableOpacity>
+          <ModalButton onPress={onNextLevelPress} type="primary">
+            {mode === 'practice' ? 'Next Round' : 'Next Level'}
+          </ModalButton>
+          <ModalButton onPress={onExitPress}>{mode === 'practice' ? 'Exit Round' : 'Exit Level'}</ModalButton>
         </View>
       </View>
     </Modal>

@@ -43,6 +43,24 @@ const CustomizeScreen = props => {
     ));
   };
 
+  const buildGrid = (items, itemsPerRow = 3) => {
+    const ungroupedItems = [...items];
+    const rows = [];
+    let key = 0;
+
+    while (ungroupedItems.length > 0) {
+      const group = ungroupedItems.splice(0, itemsPerRow);
+
+      rows.push(
+        <View key={`row-${key++}`} style={styles.row}>
+          {group}
+        </View>
+      );
+    }
+
+    return <React.Fragment>{rows.map(group => group)}</React.Fragment>;
+  };
+
   const applyStyle = () => {
     setApplyingStyle(true);
     CustomizationsHelpers.enableCustomization(context, selectedOption);
@@ -90,9 +108,11 @@ const CustomizeScreen = props => {
         }}
       />
       <ScreenTopSection backNavigation={navigateHome} brainPower={context.brainPower} />
-      <Text style={styles.header}>Customize Your Game</Text>
-      <View style={styles.optionsContainer}>{renderCustomizationOptions()}</View>
-      <View>{selectedOption ? ctaDisplay() : null}</View>
+      <View style={styles.content}>
+        <Text style={styles.header}>Customize Your Game</Text>
+        <View style={styles.optionsContainer}>{buildGrid(renderCustomizationOptions())}</View>
+        <View style={styles.ctaSection}>{selectedOption ? ctaDisplay() : null}</View>
+      </View>
     </View>
   );
 };
@@ -103,6 +123,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
+  content: {
+    flex: 1,
+    paddingTop: 10,
+  },
+  ctaSection: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
   header: {
     ...Typography.h2,
     color: Colors.blue,
@@ -112,8 +141,9 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flexWrap: 'wrap',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginTop: 15,
+    paddingHorizontal: 20,
   },
   notEnoughPointsMessage: {
     ...Typography.mainFont,
@@ -121,6 +151,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     margin: 20,
+  },
+  row: {
+    width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
 });
 
