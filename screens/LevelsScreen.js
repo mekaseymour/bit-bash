@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { BackButton, LevelButton } from '../components';
+import { LevelButton } from '../components';
 import { Colors, Typography } from '../styles';
 import getNumOfLevelsToDisplay from '../helpers/getNumOfLevelsToDisplay';
 import CompletedSectionModal from '../components/CompletedSectionModal';
 import saveBrainPower from '../helpers/saveBrainPower';
 import { BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION } from '../config/gameConfig';
+import ScreenTopSection from '../components/ScreenTopSection';
 
 const LevelsScreen = props => {
   const skipToLevel = props.navigation.getParam('skipToLevel');
@@ -79,13 +80,7 @@ const LevelsScreen = props => {
     return (
       <View style={styles.container}>
         <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
-        <View style={styles.topSection}>
-          <BackButton onPress={navigateHome} />
-          <View style={styles.brainPowerSection}>
-            <Text style={styles.brainPowerText}>{`Brain Power: ${props.screenProps.context.brainPower}`}</Text>
-            <Image style={styles.brainIcon} source={require('../assets/icons/brain-2x.png')} />
-          </View>
-        </View>
+        <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
         <FlatList
           contentContainerStyle={styles.flatListContainer}
           numColumns={4}
@@ -104,23 +99,6 @@ const LevelsScreen = props => {
 };
 
 const styles = StyleSheet.create({
-  brainIcon: {
-    height: 31,
-    width: 36,
-  },
-  brainPowerText: {
-    ...Typography.mainFont,
-    color: Colors.blue,
-    fontSize: 16,
-    paddingRight: 10,
-    alignSelf: 'center',
-  },
-  brainPowerSection: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
   },
@@ -128,22 +106,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
     alignItems: 'center',
-  },
-  topSection: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  topSection: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 50,
-    marginBottom: 10,
-    height: '13%',
-    paddingHorizontal: 20,
   },
   continuousIndicator: {
     justifyContent: 'center',

@@ -9,3 +9,8 @@ export const large = {
 export const mainFont = {
   fontFamily: 'bungee',
 };
+
+export const h2 = {
+  ...fancyFont,
+  fontSize: 45,
+};

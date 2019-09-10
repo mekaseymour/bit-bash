@@ -26,6 +26,12 @@ const HomeScreen = props => (
       >
         <Text style={Button.wideButtonText}>Practice</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={Button.wideButton(Colors.aquaBlue, Colors.darkAquaBlue)}
+        onPress={() => props.navigation.navigate('Customize')}
+      >
+        <Text style={Button.wideButtonText}>Customize</Text>
+      </TouchableOpacity>
     </View>
   </ImageBackground>
 );
@@ -40,7 +46,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   titleContainer: {
-    marginBottom: 10,
+    marginBottom: 15,
   },
   title: {
     ...Typography.fancyFont,
