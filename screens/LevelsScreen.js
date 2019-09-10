@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LevelButton } from '../components';
 import { Colors, Typography } from '../styles';
@@ -17,11 +17,20 @@ const LevelsScreen = props => {
   const [furthestSeenLevel, setFurthestSeenLevel] = useState(props.screenProps.context.furthestSeenLevel.id || 1);
   const [showCompletedSectionModal, setShowCompletedSectionModal] = useState(false);
 
+  const flatlistRef = useRef();
+
   useEffect(() => {
     if (skipToLevel) {
       navigateToGame(skipToLevel);
     } else {
       setIsLoading(false);
+      let wait = new Promise(resolve => setTimeout(resolve, 200)); // Smaller number should work
+      wait.then(() => {
+        flatlistRef.current.scrollToIndex({
+          index: props.screenProps.context.furthestSeenLevel.id / 4,
+          animated: true,
+        });
+      });
     }
 
     if (sectionCompleted) {
@@ -82,6 +91,7 @@ const LevelsScreen = props => {
         <CompletedSectionModal visible={showCompletedSectionModal} onAcknowledgePress={onSectionCompletedModalClose} />
         <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
         <FlatList
+          ref={flatlistRef}
           contentContainerStyle={styles.flatListContainer}
           numColumns={4}
           data={listData}
