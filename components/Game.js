@@ -264,8 +264,8 @@ const Game = props => {
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} />
-      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} />
+      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} mode={mode} />
+      <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} mode={mode} />
       <HintModal
         hints={gameState.hints}
         hintsUnlocked={gameState.hintsUnlocked}
@@ -280,6 +280,7 @@ const Game = props => {
         earnedBrainPower={getEarnedBrainPower()}
         onNextLevelPress={onNextGamePress}
         onExitPress={onExitPress}
+        mode={mode}
       />
       <View style={styles.topSectionContainer}>
         <View style={styles.placeholder} />
