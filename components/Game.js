@@ -107,7 +107,7 @@ const Game = props => {
 
     if (mode !== 'practice') {
       persistGameChanges(context, gameWithUpdatedHints);
-      BrainPowerHelpers.deductFromTotalBrainPower(context);
+      BrainPowerHelpers.deductFromTotalBrainPower(context, BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT);
     }
   };
 
@@ -306,6 +306,7 @@ const Game = props => {
                   marginHorizontal: data.spacing[0],
                   marginVertical: data.spacing[1],
                 }}
+                context={context}
               />
             ))}
         </View>

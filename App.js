@@ -9,11 +9,14 @@ import HomeScreen from './screens/HomeScreen';
 import LevelsScreen from './screens/LevelsScreen';
 import PracticeModesScreen from './screens/PracticeModesScreen';
 import PracticeScreen from './screens/PracticeScreen';
+import CustomizeScreen from './screens/CustomizeScreen';
 
 import {
   BRAIN_POWER,
   COMPLETED_LEVELS,
   FURTHEST_SEEN_LEVEL,
+  UNLOCKED_CUSTOMIZATIONS,
+  ENABLED_CUSTOMIZATION,
   PREVIOUS_BRAIN_POWER_KEY,
   PREVIOUS_COMPLETED_LEVELS_KEY,
   PREVIOUS_FURTHEST_SEEN_LEVEL_KEY,
@@ -40,7 +43,13 @@ const handleFinishLoading = setLoadingComplete => {
   setLoadingComplete(true);
 };
 
-const loadResourcesAsync = async (setBrainPower, setCompletedLevels, setFurthestSeenLevel) => {
+const loadResourcesAsync = async (
+  setBrainPower,
+  setCompletedLevels,
+  setFurthestSeenLevel,
+  setUnlockedCustomizations,
+  setEnabledCustomization
+) => {
   await Promise.all([
     Font.loadAsync({
       bungee: require('./assets/fonts/Bungee-Regular.ttf'),
@@ -51,6 +60,8 @@ const loadResourcesAsync = async (setBrainPower, setCompletedLevels, setFurthest
   const brainPower = await AsyncStorage.getItem(BRAIN_POWER);
   const completedLevels = await AsyncStorage.getItem(COMPLETED_LEVELS);
   const furthestSeenLevel = await AsyncStorage.getItem(FURTHEST_SEEN_LEVEL);
+  const unlockedCustomizations = await AsyncStorage.getItem(UNLOCKED_CUSTOMIZATIONS);
+  const enabledCustomization = await AsyncStorage.getItem(ENABLED_CUSTOMIZATION);
 
   if (!!brainPower) {
     setBrainPower(parseInt(brainPower));
@@ -63,6 +74,14 @@ const loadResourcesAsync = async (setBrainPower, setCompletedLevels, setFurthest
   if (!!furthestSeenLevel) {
     setFurthestSeenLevel(JSON.parse(furthestSeenLevel));
   }
+
+  if (!!unlockedCustomizations) {
+    setUnlockedCustomizations(JSON.parse(unlockedCustomizations));
+  }
+
+  if (!!enabledCustomization) {
+    setEnabledCustomization(JSON.parse(enabledCustomization));
+  }
 };
 
 const MainNavigator = createSwitchNavigator({
@@ -71,6 +90,7 @@ const MainNavigator = createSwitchNavigator({
   Game: props => <GameScreen {...props} />,
   PracticeModes: props => <PracticeModesScreen {...props} />,
   Practice: props => <PracticeScreen {...props} />,
+  Customize: props => <CustomizeScreen {...props} />,
 });
 
 const AppContainer = createAppContainer(MainNavigator);
@@ -83,11 +103,21 @@ const App = props => {
   const [completedLevels, setCompletedLevels] = useState([]);
   const [furthestSeenLevel, setFurthestSeenLevel] = useState({});
   const [levelsPlayedBetweenAds, setLevelsPlayedBetweenAds] = useState(0);
+  const [unlockedCustomizations, setUnlockedCustomizations] = useState([]);
+  const [enabledCustomization, setEnabledCustomization] = useState(null);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
-        startAsync={() => loadResourcesAsync(setBrainPower, setCompletedLevels, setFurthestSeenLevel)}
+        startAsync={() =>
+          loadResourcesAsync(
+            setBrainPower,
+            setCompletedLevels,
+            setFurthestSeenLevel,
+            setUnlockedCustomizations,
+            setEnabledCustomization
+          )
+        }
         onError={handleLoadingError}
         onFinish={() => handleFinishLoading(setLoadingComplete)}
       />
@@ -104,6 +134,10 @@ const App = props => {
           setFurthestSeenLevel,
           levelsPlayedBetweenAds,
           setLevelsPlayedBetweenAds,
+          unlockedCustomizations,
+          setUnlockedCustomizations,
+          enabledCustomization,
+          setEnabledCustomization,
         }}
       >
         <View style={styles.container}>

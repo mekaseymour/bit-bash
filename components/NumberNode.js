@@ -1,16 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
-const NumberNode = ({ data, onPress, spacing }) => {
+const NumberNode = ({ context, data, onPress, spacing }) => {
   const { num, size, selected } = data;
-  const baseNodeStyles = styles.numberNode(size);
+  const baseNodeStyles = context.enabledCustomization ? styles.customNumberNode(size) : styles.numberNode(size);
   const nodeStyle = selected ? { ...baseNodeStyles, ...styles.selected } : baseNodeStyles;
 
   return (
     <TouchableOpacity style={{ ...spacing, ...nodeStyle }} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.number(num)}>{num}</Text>
+      {context.enabledCustomization ? (
+        <ImageBackground source={context.enabledCustomization.icon} style={baseNodeStyles}>
+          <Text style={styles.number(num)}>{num}</Text>
+        </ImageBackground>
+      ) : (
+        <TouchableOpacity style={{ ...spacing, ...nodeStyle }} onPress={onPress} activeOpacity={0.8}>
+          <Text style={styles.number(num)}>{num}</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 };
@@ -30,6 +38,13 @@ const fontSize = num => {
 };
 
 const styles = StyleSheet.create({
+  customNumberNode: size => ({
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    height: size,
+    width: size,
+  }),
   numberNode: size => ({
     justifyContent: 'center',
     alignItems: 'center',

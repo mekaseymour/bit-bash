@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Colors, Typography } from '../styles';
 import { BackButton } from '../components';
 import { LEVELS_PER_SECTION } from '../config/gameConfig';
+import ScreenTopSection from '../components/ScreenTopSection';
 
 const PracticeModesScreen = props => {
   const [isLoadingGame, setIsLoadingGame] = useState(true);
@@ -24,9 +25,7 @@ const PracticeModesScreen = props => {
 
   return !isLoadingGame ? (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <BackButton onPress={navigateHome} />
-      </View>
+      <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
       <View style={styles.contentWrapper}>
         <Text style={styles.header}>Select Your Mode</Text>
         <View style={styles.buttonAndDescriptionWrapper}>
@@ -65,8 +64,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     width: '100%',
-    paddingTop: '15%',
-    paddingHorizontal: 20,
   },
   buttonAndDescriptionWrapper: {
     alignItems: 'center',
@@ -88,6 +85,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
     textAlign: 'center',
     marginBottom: 30,
+    paddingHorizontal: 10,
   },
   multiplicationAndDivisonModes: {
     borderRadius: 8,
