@@ -134,10 +134,6 @@ const styles = StyleSheet.create({
     color: Colors.gray,
     textAlign: 'center',
   },
-  homeIcon: {
-    height: 45,
-    width: 45,
-  },
   levels: {
     flexDirection: 'row',
     flexWrap: 'wrap',

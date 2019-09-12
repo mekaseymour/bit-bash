@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 
 const LevelButton = ({ level, goToGame, active }) => {
@@ -34,6 +34,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 1.0,
     shadowRadius: 0,
     paddingTop: 10,
+    ...Platform.select({
+      android: {
+        height: 70,
+        paddingTop: 0,
+      },
+    }),
   },
   inactiveButton: {
     backgroundColor: Colors.lightGray,

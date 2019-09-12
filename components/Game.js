@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Platform, StyleSheet, Text, View } from 'react-native';
 import { AdMobInterstitial } from 'expo-ads-admob';
 
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 45,
-    paddingBottom: IPHONE_8_OR_SMALLER ? 25 : 35,
+    paddingBottom: IPHONE_8_OR_SMALLER ? 20 : 35,
     justifyContent: 'space-between',
   },
   nodesContainer: {
@@ -370,6 +370,11 @@ const styles = StyleSheet.create({
     ...Typography.large,
     color: Colors.blue,
     textAlign: 'center',
+    ...Platform.select({
+      android: {
+        lineHeight: Typography.large.fontSize,
+      },
+    }),
   },
   topSectionContainer: {
     width: '100%',
@@ -389,10 +394,18 @@ const styles = StyleSheet.create({
   totalContainer: {
     height: 60,
   },
-  total: total => ({
-    ...Typography.mainFont,
-    color: Colors.gray,
-    textAlign: 'center',
-    fontSize: String(total).length > 4 ? 45 : Typography.large.fontSize,
-  }),
+  total: total => {
+    const calculatedFontSize = String(total).length > 4 ? 45 : Typography.large.fontSize;
+    return {
+      ...Typography.mainFont,
+      color: Colors.gray,
+      textAlign: 'center',
+      fontSize: calculatedFontSize,
+      ...Platform.select({
+        android: {
+          lineHeight: calculatedFontSize,
+        },
+      }),
+    };
+  },
 });

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as Colors from './colors';
 import * as Typography from './typography';
 
@@ -27,6 +28,13 @@ export const operationButton = {
   width: 75,
   paddingTop: 10,
   marginHorizontal: 8,
+  ...Platform.select({
+    android: {
+      shadowOffset: { width: 0, height: 8 },
+      height: 75,
+      paddingTop: 0,
+    },
+  }),
 };
 
 export const operationButtonText = {
@@ -54,4 +62,12 @@ export const wideButton = (color, shadowColor) => ({
   width: 280,
   paddingTop: 7,
   marginBottom: 20,
+  ...Platform.select({
+    android: {
+      shadowOffset: { width: 0, height: 8 },
+      height: 66,
+      paddingTop: 0,
+      marginBottom: 12,
+    },
+  }),
 });
