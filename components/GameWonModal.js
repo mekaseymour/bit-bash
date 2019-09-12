@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Modal, Text, View } from 'react-native';
 import { Modal as ModalStyles } from '../styles';
-import { exitLevelButton, muscleIcon, nextLevelButton } from '../assets';
+import { muscleIcon } from '../assets';
 import ModalButton from './ModalButton';
 
 const GameWonModal = ({ earnedBrainPower, mode, onExitPress, onNextLevelPress, visible }) => {

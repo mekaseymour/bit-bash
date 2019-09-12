@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Modal, Text, View } from 'react-native';
 import { Modal as ModalStyles } from '../styles';
-import { exitLevelButton, resetButton, successKidIcon } from '../assets';
+import { successKidIcon } from '../assets';
 import ModalButton from './ModalButton';
 
 const GameLostModal = ({ visible, mode, onExitPress, onResetPress }) => (

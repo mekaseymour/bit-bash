@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 import { Modal as ModalStyles } from '../styles';
-import { exitLevelButton, resetButton, confettiIcon } from '../assets';
+import { confettiIcon } from '../assets';
 import ModalButton from './ModalButton';
 
 const CompletedSectionModal = ({ visible, onAcknowledgePress }) => (
