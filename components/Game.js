@@ -264,7 +264,14 @@ const Game = props => {
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} mode={mode} />
+      <PauseModal
+        brainPower={context.brainPower}
+        visible={gamePaused}
+        onResumePress={resumeGame}
+        onExitPress={onExitPress}
+        mode={mode}
+        level={navigation.getParam('level')}
+      />
       <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} mode={mode} />
       <HintModal
         hints={gameState.hints}
