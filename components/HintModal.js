@@ -26,15 +26,12 @@ const HintModal = ({
   const [unlockedHints, setUnlockedHints] = useState([]);
   const [levelHints, setLevelHints] = useState([]);
 
-  useEffect(
-    () => {
-      if (hints) {
-        setUnlockedHints(hints.slice(0, hintsUnlocked));
-        setLevelHints(hints);
-      }
-    },
-    [hints, hintsUnlocked]
-  );
+  useEffect(() => {
+    if (hints) {
+      setUnlockedHints(hints.slice(0, hintsUnlocked));
+      setLevelHints(hints);
+    }
+  }, [hints, hintsUnlocked]);
 
   const hintsAreAvailableForLevel = hints && hints.length > 0;
   const gameHasSomeUnlockedHints = hintsUnlocked > 0;

@@ -264,7 +264,14 @@ const Game = props => {
 
   return (
     <View style={styles.container}>
-      <PauseModal visible={gamePaused} onResumePress={resumeGame} onExitPress={onExitPress} mode={mode} />
+      <PauseModal
+        brainPower={context.brainPower}
+        visible={gamePaused}
+        onResumePress={resumeGame}
+        onExitPress={onExitPress}
+        mode={mode}
+        level={navigation.getParam('level')}
+      />
       <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} mode={mode} />
       <HintModal
         hints={gameState.hints}
@@ -338,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 45,
-    paddingBottom: IPHONE_8_OR_SMALLER ? 15 : 25,
+    paddingBottom: IPHONE_8_OR_SMALLER ? 25 : 35,
     justifyContent: 'space-between',
   },
   nodesContainer: {

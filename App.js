@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import { AsyncStorage, StyleSheet, Text, View } from 'react-native';
 import { AppLoading } from 'expo';
+import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 
@@ -44,6 +45,18 @@ const loadResourcesAsync = async (
   setEnabledCustomization
 ) => {
   await Promise.all([
+    Asset.loadAsync([
+      require('./assets/icons/brain-2x.png'),
+      require('./assets/icons/moon-2x.png'),
+      require('./assets/icons/mercury-planet-2x.png'),
+      require('./assets/icons/venus-planet-2x.png'),
+      require('./assets/icons/earth-planet-2x.png'),
+      require('./assets/icons/mars-planet-2x.png'),
+      require('./assets/icons/jupiter-planet-2x.png'),
+      require('./assets/icons/saturn-planet-2x.png'),
+      require('./assets/icons/uranus-planet-2x.png'),
+      require('./assets/icons/neptune-planet-2x.png'),
+    ]),
     Font.loadAsync({
       bungee: require('./assets/fonts/Bungee-Regular.ttf'),
       bungeeShade: require('./assets/fonts/BungeeShade-Regular.ttf'),

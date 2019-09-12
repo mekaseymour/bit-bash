@@ -28,6 +28,10 @@ const showAd = async (afterAdAction, context) => {
     AdMobInterstitial.addEventListener('interstitialDidClose', () => {
       afterAdAction();
     });
+
+    AdMobInterstitial.addEventListener('interstitialDidFailToLoad', () => {
+      afterAdAction();
+    });
   } catch (error) {
     console.log('error from showAd', error);
     afterAdAction();

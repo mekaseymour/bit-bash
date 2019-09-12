@@ -26,7 +26,7 @@ const LevelsScreen = props => {
       navigateToGame(skipToLevel);
     } else {
       setIsLoading(false);
-      let wait = new Promise(resolve => setTimeout(resolve, 200)); // Smaller number should work
+      let wait = new Promise(resolve => setTimeout(resolve, 500)); // Smaller number should work
       wait.then(() => {
         flatlistRef.current.scrollToIndex({
           index: furthestSeenLevel / LEVEL_ICONS_PER_ROW,

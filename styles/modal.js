@@ -10,7 +10,7 @@ export const button = {
 export const contentContainer = {
   backgroundColor: Colors.white,
   height: 'auto',
-  minHeight: 300,
+  minHeight: 320,
   width: 265,
   borderRadius: 8,
   justifyContent: 'space-between',
@@ -27,12 +27,20 @@ export const header = {
   color: Colors.blue,
   fontSize: 25,
   textAlign: 'center',
-  marginBottom: 10,
+  marginVertical: 10,
+};
+
+export const topSectionText = {
+  ...Typography.mainFont,
+  color: Colors.blue,
+  fontSize: 14,
+  textAlign: 'center',
 };
 
 export const subheader = {
   ...header,
   fontSize: 18,
+  marginTop: 0,
 };
 
 export const wrapper = {

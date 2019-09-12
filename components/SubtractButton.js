@@ -1,11 +1,11 @@
 import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import { Button } from '../styles';
 import { SUBTRACTION_OPERATOR } from '../util/operations';
 
 const SubtractButton = ({ onPress }) => (
-  <TouchableOpacity onPress={() => onPress(SUBTRACTION_OPERATOR)}>
-    <Image style={Button.OPERATION_BUTTON} source={require('../assets/icons/subtract-button-2x.png')} />
+  <TouchableOpacity style={Button.operationButton} onPress={() => onPress(SUBTRACTION_OPERATOR)}>
+    <Text style={Button.operationButtonText}>-</Text>
   </TouchableOpacity>
 );
 
