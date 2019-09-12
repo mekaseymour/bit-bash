@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors, Typography } from '../styles';
 import { IPHONE_8_OR_SMALLER, IPHONE_X_OR_SMALLER } from '../util/constants';
@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
     color: unlocked ? Colors.blue : Colors.gray,
     fontSize: 14,
     textAlign: 'center',
+    ...Platform.select({
+      android: {
+        lineHeight: 14,
+      },
+    }),
   }),
   customizationOption: {
     margin: 5,

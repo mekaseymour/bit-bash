@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
 import { Button, Colors, Typography } from '../styles';
@@ -137,6 +137,9 @@ const styles = StyleSheet.create({
     color: Colors.blue,
     textAlign: 'center',
     fontSize: IPHONE_8_OR_SMALLER ? 35 : 45,
+    ...Platform.select({
+      lineHeight: IPHONE_8_OR_SMALLER ? 35 : 45,
+    }),
   },
   optionsContainer: {
     flexWrap: 'wrap',

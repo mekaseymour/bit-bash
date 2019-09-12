@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors, Typography } from '../styles';
 
 const ModalButton = ({ children, onPress, type }) => {
@@ -30,6 +30,13 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: type === 'primary' ? Colors.green : Colors.lightGray,
     shadowColor: type === 'primary' ? Colors.darkGreen : Colors.gray,
+    ...Platform.select({
+      android: {
+        paddingTop: 0,
+        shadowOffset: { width: 0, height: 8 },
+        height: 63,
+      },
+    }),
   }),
 });
 

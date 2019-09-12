@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, ImageBackground, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ImageBackground, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Colors, Typography } from '../styles';
 import AnimatedBrain from '../components/AnimatedBrain';
 
@@ -47,12 +47,22 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     marginBottom: 15,
+    ...Platform.select({
+      android: {
+        marginBottom: 25,
+      },
+    }),
   },
   title: {
     ...Typography.fancyFont,
     color: Colors.blue,
     fontSize: 55,
     textAlign: 'center',
+    ...Platform.select({
+      android: {
+        lineHeight: 55,
+      },
+    }),
   },
 });
 

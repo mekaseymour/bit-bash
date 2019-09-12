@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Platform, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { Colors, Typography } from '../styles';
 import equationForDisplay from '../helpers/equationForDisplay';
@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
     ...Typography.mainFont,
     color: Colors.gray,
     fontSize: 40,
+    ...Platform.select({
+      android: {
+        lineHeight: 40,
+      },
+    }),
   },
 });
 

@@ -1,11 +1,6 @@
+import { Platform } from 'react-native';
 import * as Colors from './colors';
 import * as Typography from './typography';
-
-export const button = {
-  width: 245,
-  height: 55,
-  marginTop: 13,
-};
 
 export const contentContainer = {
   backgroundColor: Colors.white,
@@ -28,6 +23,11 @@ export const header = {
   fontSize: 25,
   textAlign: 'center',
   marginVertical: 10,
+  ...Platform.select({
+    android: {
+      lineHeight: 25,
+    },
+  }),
 };
 
 export const topSectionText = {
@@ -35,12 +35,22 @@ export const topSectionText = {
   color: Colors.blue,
   fontSize: 14,
   textAlign: 'center',
+  ...Platform.select({
+    android: {
+      lineHeight: 14,
+    },
+  }),
 };
 
 export const subheader = {
   ...header,
   fontSize: 18,
   marginTop: 0,
+  ...Platform.select({
+    android: {
+      lineHeight: 18,
+    },
+  }),
 };
 
 export const wrapper = {
