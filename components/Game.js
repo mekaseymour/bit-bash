@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 45,
-    paddingBottom: IPHONE_8_OR_SMALLER ? 15 : 25,
+    paddingBottom: IPHONE_8_OR_SMALLER ? 25 : 35,
     justifyContent: 'space-between',
   },
   nodesContainer: {

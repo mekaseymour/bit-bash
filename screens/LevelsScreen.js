@@ -99,7 +99,6 @@ const LevelsScreen = props => {
           contentContainerStyle={styles.flatListContainer}
           numColumns={LEVEL_ICONS_PER_ROW}
           data={listData}
-          initialNumToRender={listData.length}
           renderItem={({ item }) => {
             if (item.comp) {
               return item.comp;
