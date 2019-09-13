@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
 import { IPHONE_8_OR_SMALLER } from '../util/constants';
 
@@ -43,6 +43,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: size,
     width: size,
+    ...Platform.select({
+      android: {
+        overflow: 'hidden',
+      },
+    }),
   }),
   numberNode: size => ({
     justifyContent: 'center',

@@ -1,12 +1,20 @@
+import { Platform } from 'react-native';
 import { AdMobInterstitial } from 'expo-ads-admob';
 import shouldShowAd from './shouldShowAd';
-import { GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
+import { ANDROID_GOOGLE_INTERSTITIAL_AD_UNIT_ID, IOS_GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
 
 const configureAndRequestAd = async () => {
   const isReady = await AdMobInterstitial.getIsReadyAsync();
 
   if (!isReady) {
-    AdMobInterstitial.setAdUnitID(GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+    if (Platform.OS === 'ios') {
+      AdMobInterstitial.setAdUnitID(IOS_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+    }
+
+    if (Platform.OS === 'android') {
+      AdMobInterstitial.setAdUnitID(ANDROID_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+    }
+
     AdMobInterstitial.setTestDeviceID('EMULATOR');
     await AdMobInterstitial.requestAdAsync();
   }
