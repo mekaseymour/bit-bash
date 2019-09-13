@@ -1,14 +1,17 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Typography } from '../styles';
 
-const LevelButton = ({ level, goToGame, active }) => {
+const LevelButton = ({ active, isUpNext, level, goToGame }) => {
   const additionalButtonStyles = active ? styles.activeButton : styles.inactiveButton;
 
   return (
-    <TouchableOpacity style={{ ...styles.button, ...additionalButtonStyles }} onPress={goToGame} disabled={!active}>
-      <Text style={active ? styles.activeText : styles.inactiveText}>{level}</Text>
-    </TouchableOpacity>
+    <View>
+      {isUpNext ? <View style={styles.outline} /> : null}
+      <TouchableOpacity style={{ ...styles.button, ...additionalButtonStyles }} onPress={goToGame} disabled={!active}>
+        <Text style={active ? styles.activeText : styles.inactiveText}>{level}</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -49,6 +52,16 @@ const styles = StyleSheet.create({
     ...Typography.mainFont,
     fontSize: 28,
     color: Colors.gray,
+  },
+  outline: {
+    position: 'absolute',
+    height: 80,
+    width: 80,
+    borderRadius: 13,
+    borderWidth: 5,
+    borderColor: Colors.green,
+    top: 5,
+    left: 5,
   },
 });
 
