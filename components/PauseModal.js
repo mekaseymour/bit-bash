@@ -2,7 +2,6 @@ import React from 'react';
 import { Image, Modal, Text, View } from 'react-native';
 import { Colors, Modal as ModalStyles, Typography } from '../styles';
 import ModalButton from './ModalButton';
-import BrainPowerSection from './BrainPowerSection';
 
 const PauseModal = ({ brainPower, level, mode, onExitPress, onResumePress, visible }) => (
   <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={() => {}}>

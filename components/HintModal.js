@@ -15,8 +15,10 @@ export const NEED_A_HINT_HEADER = 'Need a Hint?';
 export const NEED_ANOTHER_HINT_HEADER = 'Need Another Hint?';
 
 const HintModal = ({
+  brainPower,
   hints,
   hintsUnlocked,
+  level,
   mode,
   onDismissPress,
   onUnlockHintPress,
@@ -124,6 +126,8 @@ const HintModal = ({
     <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={ModalStyles.wrapper}>
         <View style={ModalStyles.contentContainer}>
+          {mode !== 'practice' ? <Text style={ModalStyles.topSectionText}>{`Level: ${level}`}</Text> : null}
+          <Text style={ModalStyles.topSectionText}>{`Brain Power: ${brainPower}`}</Text>
           <Text style={ModalStyles.header} data-test="hint-modal-header">
             {headerText()}
           </Text>

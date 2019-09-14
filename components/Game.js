@@ -274,6 +274,7 @@ const Game = props => {
       />
       <GameLostModal visible={gameLost} onResetPress={resetGame} onExitPress={onExitPress} mode={mode} />
       <HintModal
+        brainPower={context.brainPower}
         hints={gameState.hints}
         hintsUnlocked={gameState.hintsUnlocked}
         onDismissPress={dismissHintModal}
@@ -281,6 +282,7 @@ const Game = props => {
         userHasEnoughBrainPowerForHint={userHasEnoughBrainPowerForHint()}
         mode={mode}
         visible={showingHintModal}
+        level={navigation.getParam('level')}
       />
       <GameWonModal
         visible={gameWon}

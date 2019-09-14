@@ -26,13 +26,6 @@ const LevelsScreen = props => {
       navigateToGame(skipToLevel);
     } else {
       setIsLoading(false);
-      let wait = new Promise(resolve => setTimeout(resolve, 500)); // Smaller number should work
-      wait.then(() => {
-        flatlistRef.current.scrollToIndex({
-          index: furthestSeenLevel / LEVEL_ICONS_PER_ROW,
-          animated: true,
-        });
-      });
     }
 
     if (sectionCompleted) {
@@ -40,6 +33,7 @@ const LevelsScreen = props => {
     }
   }, []);
 
+  const levelIsUpNext = (savedLevels, currentLevel) => currentLevel === savedLevels.length + 1;
   const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
   const navigateHome = () => props.navigation.navigate('Home');
@@ -66,8 +60,10 @@ const LevelsScreen = props => {
 
         return {
           key: `level-${levelNum}`,
+          index: i,
           level: levelNum,
           active: isLevelUnlocked(savedLevels, levelNum),
+          isUpNext: levelIsUpNext(savedLevels, levelNum),
           goToGame: () => navigateToGame(levelNum, saved),
         };
       });
@@ -98,12 +94,21 @@ const LevelsScreen = props => {
           onScrollToIndexFailed={() => {}}
           contentContainerStyle={styles.flatListContainer}
           numColumns={LEVEL_ICONS_PER_ROW}
-          data={listData}
-          renderItem={({ item }) => {
+          data={listData.reverse()}
+          renderItem={({ item, index }) => {
             if (item.comp) {
               return item.comp;
             } else {
-              return <LevelButton key={item.key} level={item.level} active={item.active} goToGame={item.goToGame} />;
+              return (
+                <LevelButton
+                  key={item.key}
+                  index={index}
+                  level={item.level}
+                  active={item.active}
+                  goToGame={item.goToGame}
+                  isUpNext={item.isUpNext}
+                />
+              );
             }
           }}
         />
