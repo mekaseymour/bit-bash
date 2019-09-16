@@ -10,14 +10,20 @@ const GameWonModal = ({ earnedBrainPower, mode, onExitPress, onNextLevelPress, v
   return (
     <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={ModalStyles.wrapper}>
-        <View style={ModalStyles.contentContainer}>
-          <Text style={ModalStyles.header}>You did it!</Text>
-          <Text style={ModalStyles.subheader}>{brainPowerMessage}</Text>
-          <Image style={{ height: 58, width: 58 }} source={muscleIcon} />
-          <ModalButton onPress={onNextLevelPress} type="primary">
-            {mode === 'practice' ? 'Next Round' : 'Next Level'}
-          </ModalButton>
-          <ModalButton onPress={onExitPress}>{mode === 'practice' ? 'Exit Round' : 'Exit Level'}</ModalButton>
+        <View style={ModalStyles.container}>
+          <View style={ModalStyles.content}>
+            <View>
+              <Text style={ModalStyles.header}>You did it!</Text>
+              <Text style={ModalStyles.subheader}>{brainPowerMessage}</Text>
+            </View>
+            <Image style={{ height: 58, width: 58 }} source={muscleIcon} />
+            <View>
+              <ModalButton onPress={onNextLevelPress} type="primary">
+                {mode === 'practice' ? 'Next Round' : 'Next Level'}
+              </ModalButton>
+              <ModalButton onPress={onExitPress}>{mode === 'practice' ? 'Exit Round' : 'Exit Level'}</ModalButton>
+            </View>
+          </View>
         </View>
       </View>
     </Modal>

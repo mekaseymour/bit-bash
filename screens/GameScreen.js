@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import generateGame from '../helpers/generateGame';
-import saveCompletedLevel from '../helpers/saveCompletedLevel';
+import saveNewlyCompletedLevel from '../helpers/saveNewlyCompletedLevel';
 import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
-import { BrainPowerHelpers } from '../helpers';
+import { BrainPowerHelpers, LevelsHelpers } from '../helpers';
 
 import { LEVELS_PER_SECTION } from '../config/gameConfig';
 
@@ -39,7 +39,7 @@ const GameScreen = props => {
     const updatedCompletedLevels = [...screenProps.context.completedLevels];
     updatedCompletedLevels.push({ ...game, id: level });
     screenProps.context.setCompletedLevels(updatedCompletedLevels);
-    saveCompletedLevel(game);
+    saveNewlyCompletedLevel(game);
   };
 
   const setNextLevelAsSeen = () => {
@@ -52,6 +52,8 @@ const GameScreen = props => {
   const navigateToNextLevel = () => navigation.navigate('Levels', { skipToLevel: level + 1 });
   const navigateToLevelsWithCompletedSection = () => navigation.navigate('Levels', { completedSection: true });
 
+  const updateGameState = game => setGame(game);
+
   const onGameWon = () => {
     if (levelHasNeverBeforeBeenWon) {
       addGameToCompletedLevels();
@@ -61,6 +63,8 @@ const GameScreen = props => {
           setNextLevelAsSeen();
         }
       }
+    } else {
+      LevelsHelpers.updateAlreadyCompletedLevel(context, game);
     }
   };
 
@@ -72,6 +76,7 @@ const GameScreen = props => {
     onGameWon: onGameWon,
     onExitScreen: 'Levels',
     onNextGamePress: navigateToNextLevel,
+    onUnlockHint: updateGameState,
   };
 
   return game ? <Game {...gameProps} {...props} /> : null;

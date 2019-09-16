@@ -20,7 +20,7 @@ const CustomizationModal = ({ visible, context, customization, onContinuePress, 
   return (
     <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={ModalStyles.wrapper}>
-        <View style={{ ...ModalStyles.contentContainer, paddingHorizontal: 10 }}>
+        <View style={{ ...ModalStyles.container, paddingHorizontal: 10 }}>
           <Text style={ModalStyles.header}>Hooray! Your new getup has been applied!</Text>
           {showingDefault ? (
             <View style={styles.defaultIcon} />

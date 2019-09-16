@@ -2,19 +2,25 @@ import { Platform } from 'react-native';
 import * as Colors from './colors';
 import * as Typography from './typography';
 
-export const contentContainer = {
+export const container = {
   backgroundColor: Colors.white,
   height: 'auto',
-  minHeight: 320,
+  minHeight: 375,
   width: 265,
   borderRadius: 8,
-  justifyContent: 'space-between',
   alignItems: 'center',
   shadowColor: Colors.black,
   shadowOffset: { width: 0, height: 3 },
   shadowOpacity: 0.5,
   shadowRadius: 5,
   paddingVertical: 15,
+};
+
+export const content = {
+  flex: 1,
+  justifyContent: 'space-between',
+  height: 'auto',
+  alignItems: 'center',
 };
 
 export const header = {
@@ -45,7 +51,7 @@ export const topSectionText = {
 export const subheader = {
   ...header,
   fontSize: 18,
-  marginTop: 0,
+  marginVertical: 0,
   ...Platform.select({
     android: {
       lineHeight: 18,

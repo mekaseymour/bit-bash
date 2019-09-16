@@ -43,6 +43,7 @@ const Game = props => {
     onExitScreen,
     onGameWon,
     onNextGamePress,
+    onUnlockHint,
   } = props;
 
   /* GAME ELEMENTS */
@@ -108,6 +109,10 @@ const Game = props => {
     if (mode !== 'practice') {
       persistGameChanges(context, gameWithUpdatedHints);
       BrainPowerHelpers.deductFromTotalBrainPower(context, BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT);
+    }
+
+    if (onUnlockHint) {
+      onUnlockHint(gameWithUpdatedHints);
     }
   };
 
