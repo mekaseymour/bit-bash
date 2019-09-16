@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import { COMPLETED_LEVELS } from '../config/storageKeys';
 
-const saveCompletedLevel = async level => {
+const saveNewlyCompletedLevel = async level => {
   try {
     const alreadyCompletedLevels = await AsyncStorage.getItem(COMPLETED_LEVELS);
 
@@ -18,4 +18,4 @@ const saveCompletedLevel = async level => {
   }
 };
 
-export default saveCompletedLevel;
+export default saveNewlyCompletedLevel;

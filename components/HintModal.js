@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Modal as ModalStyles, Typography } from '../styles';
 import ModalButton from './ModalButton';
-import { getOperatorForDisplay } from '../util/operations';
+import ModalLevelAndBrainPowerSection from './ModalLevelAndBrainPowerSection';
 
 import { hintIcon } from '../assets';
 
@@ -125,14 +125,15 @@ const HintModal = ({
   return (
     <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={ModalStyles.wrapper}>
-        <View style={ModalStyles.contentContainer}>
-          {mode !== 'practice' ? <Text style={ModalStyles.topSectionText}>{`Level: ${level}`}</Text> : null}
-          <Text style={ModalStyles.topSectionText}>{`Brain Power: ${brainPower}`}</Text>
-          <Text style={ModalStyles.header} data-test="hint-modal-header">
-            {headerText()}
-          </Text>
-          {getMainHintContent()}
-          {getModalButtons()}
+        <View style={ModalStyles.container}>
+          <ModalLevelAndBrainPowerSection brainPower={brainPower} level={level} mode={mode} />
+          <View style={ModalStyles.content}>
+            <Text style={ModalStyles.header} data-test="hint-modal-header">
+              {headerText()}
+            </Text>
+            {getMainHintContent()}
+            {getModalButtons()}
+          </View>
         </View>
       </View>
     </Modal>
