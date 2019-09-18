@@ -4,7 +4,6 @@ import * as Typography from './typography';
 
 export const container = {
   backgroundColor: Colors.white,
-  height: 'auto',
   minHeight: 375,
   width: 265,
   borderRadius: 8,
