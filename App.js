@@ -15,12 +15,10 @@ import CustomizeScreen from './screens/CustomizeScreen';
 import {
   BRAIN_POWER,
   COMPLETED_LEVELS,
-  FURTHEST_SEEN_LEVEL,
-  UNLOCKED_CUSTOMIZATIONS,
   ENABLED_CUSTOMIZATION,
-  PREVIOUS_BRAIN_POWER_KEY,
-  PREVIOUS_COMPLETED_LEVELS_KEY,
-  PREVIOUS_FURTHEST_SEEN_LEVEL_KEY,
+  FURTHEST_SEEN_LEVEL,
+  IS_FIRST_TIME_OPENING_APP,
+  UNLOCKED_CUSTOMIZATIONS,
 } from './config/storageKeys';
 
 if (__DEV__) {
@@ -42,7 +40,8 @@ const loadResourcesAsync = async (
   setCompletedLevels,
   setFurthestSeenLevel,
   setUnlockedCustomizations,
-  setEnabledCustomization
+  setEnabledCustomization,
+  setIsFirstTimeOpeningApp
 ) => {
   await Promise.all([
     Asset.loadAsync([
@@ -68,6 +67,7 @@ const loadResourcesAsync = async (
   const furthestSeenLevel = await AsyncStorage.getItem(FURTHEST_SEEN_LEVEL);
   const unlockedCustomizations = await AsyncStorage.getItem(UNLOCKED_CUSTOMIZATIONS);
   const enabledCustomization = await AsyncStorage.getItem(ENABLED_CUSTOMIZATION);
+  const isFirstTimeOpeningApp = await AsyncStorage.getItem(IS_FIRST_TIME_OPENING_APP);
 
   if (!!brainPower) {
     setBrainPower(parseInt(brainPower));
@@ -87,6 +87,12 @@ const loadResourcesAsync = async (
 
   if (!!enabledCustomization) {
     setEnabledCustomization(JSON.parse(enabledCustomization));
+  }
+
+  if (isFirstTimeOpeningApp === null) {
+    setIsFirstTimeOpeningApp(true);
+  } else {
+    setIsFirstTimeOpeningApp(false);
   }
 };
 
@@ -111,6 +117,7 @@ const App = props => {
   const [levelsPlayedBetweenAds, setLevelsPlayedBetweenAds] = useState(0);
   const [unlockedCustomizations, setUnlockedCustomizations] = useState([]);
   const [enabledCustomization, setEnabledCustomization] = useState(null);
+  const [isFirstTimeOpeningApp, setIsFirstTimeOpeningApp] = useState(true);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -121,7 +128,8 @@ const App = props => {
             setCompletedLevels,
             setFurthestSeenLevel,
             setUnlockedCustomizations,
-            setEnabledCustomization
+            setEnabledCustomization,
+            setIsFirstTimeOpeningApp
           )
         }
         onError={handleLoadingError}
@@ -144,6 +152,8 @@ const App = props => {
           setUnlockedCustomizations,
           enabledCustomization,
           setEnabledCustomization,
+          isFirstTimeOpeningApp,
+          setIsFirstTimeOpeningApp,
         }}
       >
         <View style={styles.container}>

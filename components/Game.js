@@ -15,6 +15,7 @@ import { BRAIN_POWER_REQUIRED_TO_UNLOCK_HINT, BRAIN_POWER_AWARDED_FOR_PRACTICE_G
 import { ADD, SUBTRACT, MULTIPLY, DIVIDE } from '../util/operations';
 import { getMaxNodeSize } from '../util/nodes';
 import persistGameChanges from '../helpers/persistGameChanges';
+import HowToModal from '../components/HowToModal';
 
 import {
   AddButton,
@@ -269,6 +270,7 @@ const Game = props => {
 
   return (
     <View style={styles.container}>
+      <HowToModal context={context} visible={context.isFirstTimeOpeningApp} />
       <PauseModal
         brainPower={context.brainPower}
         visible={gamePaused}
