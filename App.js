@@ -12,6 +12,8 @@ import PracticeModesScreen from './screens/PracticeModesScreen';
 import PracticeScreen from './screens/PracticeScreen';
 import CustomizeScreen from './screens/CustomizeScreen';
 
+import { configureAds } from './helpers/adHelpers';
+
 import {
   BRAIN_POWER,
   COMPLETED_LEVELS,
@@ -118,6 +120,8 @@ const App = props => {
   const [unlockedCustomizations, setUnlockedCustomizations] = useState([]);
   const [enabledCustomization, setEnabledCustomization] = useState(null);
   const [isFirstTimeOpeningApp, setIsFirstTimeOpeningApp] = useState(true);
+
+  configureAds();
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (

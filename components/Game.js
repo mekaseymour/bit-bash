@@ -67,7 +67,7 @@ const Game = props => {
     setupGame(gameState);
     setMaxNodeSize(getMaxNodeSize(gameState.nums.length));
 
-    AdHelpers.configureAndRequestAd();
+    AdMobInterstitial.requestAdAsync().catch(e => console.log('error', e));
 
     return () => {
       AdMobInterstitial.removeEventListener('interstitialDidClose');

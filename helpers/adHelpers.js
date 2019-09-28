@@ -3,47 +3,43 @@ import { AdMobInterstitial } from 'expo-ads-admob';
 import shouldShowAd from './shouldShowAd';
 import { ANDROID_GOOGLE_INTERSTITIAL_AD_UNIT_ID, IOS_GOOGLE_INTERSTITIAL_AD_UNIT_ID } from '../config';
 
-const configureAndRequestAd = async () => {
-  const isReady = await AdMobInterstitial.getIsReadyAsync();
-
-  if (!isReady) {
-    if (Platform.OS === 'ios') {
-      AdMobInterstitial.setAdUnitID(IOS_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
-    }
-
-    if (Platform.OS === 'android') {
-      AdMobInterstitial.setAdUnitID(ANDROID_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
-    }
-
-    AdMobInterstitial.setTestDeviceID('EMULATOR');
-    await AdMobInterstitial.requestAdAsync();
+const configureAds = () => {
+  if (Platform.OS === 'ios') {
+    AdMobInterstitial.setAdUnitID(IOS_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
   }
+
+  if (Platform.OS === 'android') {
+    AdMobInterstitial.setAdUnitID(ANDROID_GOOGLE_INTERSTITIAL_AD_UNIT_ID);
+  }
+
+  AdMobInterstitial.setTestDeviceID('EMULATOR');
 };
 
-const showAd = async (afterAdAction, context) => {
+const showAd = async (actionAfterAdPlays, context) => {
   context.setLevelsPlayedBetweenAds(0);
 
   try {
-    const isReady = await AdMobInterstitial.getIsReadyAsync();
+    const adAlreadyRequested = await AdMobInterstitial.getIsReadyAsync();
 
-    if (isReady) {
-      await AdMobInterstitial.showAdAsync();
+    if (adAlreadyRequested) {
+      AdMobInterstitial.showAdAsync();
     } else {
-      await configureAndRequestAd();
-      await AdMobInterstitial.showAdAsync();
+      AdMobInterstitial.requestAdAsync()
+        .then(() => AdMobInterstitial.showAdAsync())
+        .catch(e => console.log('error', e));
     }
 
     AdMobInterstitial.addEventListener('interstitialDidClose', () => {
-      afterAdAction();
+      actionAfterAdPlays();
     });
 
     AdMobInterstitial.addEventListener('interstitialDidFailToLoad', () => {
-      afterAdAction();
+      actionAfterAdPlays();
     });
   } catch (error) {
     console.log('error from showAd', error);
-    afterAdAction();
+    actionAfterAdPlays();
   }
 };
 
-export { configureAndRequestAd, shouldShowAd, showAd };
+export { shouldShowAd, showAd, configureAds };
