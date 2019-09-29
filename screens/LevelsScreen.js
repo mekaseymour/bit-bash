@@ -31,6 +31,14 @@ const LevelsScreen = props => {
     if (sectionCompleted) {
       setShowCompletedSectionModal(true);
     }
+
+    const timer = setTimeout(() => {
+      if (flatlistRef && flatlistRef.current) {
+        flatlistRef.current.scrollToEnd();
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const levelIsUpNext = (savedLevels, currentLevel) => currentLevel === savedLevels.length + 1;
@@ -88,9 +96,6 @@ const LevelsScreen = props => {
         <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
         <FlatList
           ref={flatlistRef}
-          initialScrollIndex={
-            furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1
-          }
           onScrollToIndexFailed={() => {}}
           contentContainerStyle={styles.flatListContainer}
           numColumns={LEVEL_ICONS_PER_ROW}
