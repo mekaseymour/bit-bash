@@ -69,9 +69,6 @@ const LevelsScreen = props => {
       });
   };
 
-  const initialRowIndex = () =>
-    furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1;
-
   if (isLoading) {
     return null;
   } else {
@@ -91,10 +88,13 @@ const LevelsScreen = props => {
         <ScreenTopSection backNavigation={navigateHome} brainPower={props.screenProps.context.brainPower} />
         <FlatList
           ref={flatlistRef}
+          initialScrollIndex={
+            furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1
+          }
           onScrollToIndexFailed={() => {}}
           contentContainerStyle={styles.flatListContainer}
           numColumns={LEVEL_ICONS_PER_ROW}
-          data={listData.reverse()}
+          data={listData}
           renderItem={({ item, index }) => {
             if (item.comp) {
               return item.comp;
