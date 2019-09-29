@@ -21,24 +21,28 @@ const CustomizationModal = ({ visible, context, customization, onContinuePress, 
     <Modal animationType="fade" transparent={true} visible={visible}>
       <View style={ModalStyles.wrapper}>
         <View style={{ ...ModalStyles.container, paddingHorizontal: 10 }}>
-          <Text style={ModalStyles.header}>Hooray! Your new getup has been applied!</Text>
-          {showingDefault ? (
-            <View style={styles.defaultIcon} />
-          ) : (
-            <Image style={{ height: 85, width: 85, marginBottom: 10 }} source={customization.icon} />
-          )}
-          <ModalButton onPress={onContinuePress} type="primary">
-            Continue
-          </ModalButton>
-          {showingDefault ? (
-            <TouchableOpacity onPress={enableCustomization}>
-              <Text style={styles.undoChangesText}>Back to Custom Style</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={setDefaultStyle}>
-              <Text style={styles.undoChangesText}>Back to Default Style</Text>
-            </TouchableOpacity>
-          )}
+          <View style={ModalStyles.content}>
+            <Text style={ModalStyles.header}>Hooray! Your new getup has been applied!</Text>
+            {showingDefault ? (
+              <View style={styles.defaultIcon} />
+            ) : (
+              <Image style={{ height: 85, width: 85, marginBottom: 10 }} source={customization.icon} />
+            )}
+            <View>
+              <ModalButton onPress={onContinuePress} type="primary">
+                Continue
+              </ModalButton>
+              {showingDefault ? (
+                <TouchableOpacity onPress={enableCustomization}>
+                  <Text style={styles.undoChangesText}>Back to Custom Style</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={setDefaultStyle}>
+                  <Text style={styles.undoChangesText}>Back to Default Style</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
         </View>
       </View>
     </Modal>
@@ -59,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: 'underline',
     marginTop: 10,
+    textAlign: 'center',
   },
 });
 
