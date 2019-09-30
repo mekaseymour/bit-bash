@@ -31,14 +31,6 @@ const LevelsScreen = props => {
     if (sectionCompleted) {
       setShowCompletedSectionModal(true);
     }
-
-    const timer = setTimeout(() => {
-      if (flatlistRef && flatlistRef.current) {
-        flatlistRef.current.scrollToEnd();
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const levelIsUpNext = (savedLevels, currentLevel) => currentLevel === savedLevels.length + 1;
