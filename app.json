@@ -3,7 +3,7 @@
     "name": "Bit Bash",
     "slug": "digit-mash",
     "privacy": "public",
-    "sdkVersion": "34.0.0",
+    "sdkVersion": "35.0.0",
     "platforms": ["ios", "android"],
     "version": "1.0.19",
     "orientation": "portrait",
@@ -19,11 +19,17 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mekaseymour.digitmash"
+      "bundleIdentifier": "com.mekaseymour.digitmash",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-3967223701945286~7164341868"
+      }
     },
     "android": {
       "package": "com.mekaseymour.bitbash",
-      "versionCode": 2
+      "versionCode": 2,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-3967223701945286~1061955602"
+      }
     }
   }
 }
