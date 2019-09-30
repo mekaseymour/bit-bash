@@ -77,6 +77,9 @@ const LevelsScreen = props => {
       });
   };
 
+  const initialRowIndex = () =>
+    furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1;
+
   if (isLoading) {
     return null;
   } else {
@@ -99,7 +102,7 @@ const LevelsScreen = props => {
           onScrollToIndexFailed={() => {}}
           contentContainerStyle={styles.flatListContainer}
           numColumns={LEVEL_ICONS_PER_ROW}
-          data={listData}
+          data={listData.reverse()}
           renderItem={({ item, index }) => {
             if (item.comp) {
               return item.comp;
