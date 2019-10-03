@@ -8,6 +8,7 @@ const updateFurthestSeenLevel = async (context, game) => {
     const currentLevelIsFurthestSeenLevel = furthestSeenLevel.id === game.id;
 
     if (currentLevelIsFurthestSeenLevel) {
+      console.log('UPDATE FURTHEST SEEN LEVEL', game);
       context.setFurthestSeenLevel(game);
       AsyncStorage.setItem(FURTHEST_SEEN_LEVEL, JSON.stringify(game));
     }

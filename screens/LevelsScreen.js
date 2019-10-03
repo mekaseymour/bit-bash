@@ -7,10 +7,13 @@ import CompletedSectionModal from '../components/CompletedSectionModal';
 import saveBrainPower from '../helpers/saveBrainPower';
 import { BRAIN_POWER_AWARDED_FOR_SECTION_COMPLETION } from '../config/gameConfig';
 import ScreenTopSection from '../components/ScreenTopSection';
+import { LEVELS_PER_SECTION } from '../config/gameConfig';
+import furthestCompletedLevel from '../helpers/furthestCompletedLevel';
 
 const LEVEL_ICONS_PER_ROW = 4;
 
 const LevelsScreen = props => {
+  const context = props.screenProps.context;
   const skipToLevel = props.navigation.getParam('skipToLevel');
   const sectionCompleted = props.navigation.getParam('completedSection');
 
@@ -28,13 +31,21 @@ const LevelsScreen = props => {
       setIsLoading(false);
     }
 
+    console.log('furthestSeenLevel', furthestSeenLevel);
     if (sectionCompleted) {
       setShowCompletedSectionModal(true);
     }
   }, []);
 
-  const levelIsUpNext = (savedLevels, currentLevel) => currentLevel === savedLevels.length + 1;
-  const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= savedLevels.length + 1;
+  const levelIsUpNext = currentLevel => {
+    if (context.completedLevels.length > 0) {
+      return currentLevel === furthestCompletedLevel(context).id + 1;
+    } else {
+      return currentLevel === 1;
+    }
+  };
+
+  const isLevelUnlocked = (savedLevels, currentLevel) => currentLevel <= context.completedLevels.length + 1;
   const navigateToGame = currentLevel => props.navigation.navigate('Game', { level: currentLevel });
   const navigateHome = () => props.navigation.navigate('Home');
   const hideCompletedSectionModal = () => setShowCompletedSectionModal(false);
@@ -52,7 +63,7 @@ const LevelsScreen = props => {
   };
 
   const generateListData = () => {
-    return Array(getNumOfLevelsToDisplay(furthestSeenLevel))
+    return Array(getNumOfLevelsToDisplay(context))
       .fill()
       .map((level, i) => {
         const levelNum = i + 1;
@@ -63,14 +74,11 @@ const LevelsScreen = props => {
           index: i,
           level: levelNum,
           active: isLevelUnlocked(savedLevels, levelNum),
-          isUpNext: levelIsUpNext(savedLevels, levelNum),
+          isUpNext: levelIsUpNext(levelNum),
           goToGame: () => navigateToGame(levelNum, saved),
         };
       });
   };
-
-  const initialRowIndex = () =>
-    furthestSeenLevel > LEVEL_ICONS_PER_ROW ? Math.floor(furthestSeenLevel / LEVEL_ICONS_PER_ROW) : 1;
 
   if (isLoading) {
     return null;

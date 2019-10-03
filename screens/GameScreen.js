@@ -5,6 +5,9 @@ import saveNewlyCompletedLevel from '../helpers/saveNewlyCompletedLevel';
 import levelWasAlreadyWon from '../helpers/levelWasAlreadyWon';
 import saveFurthestSeenLevel from '../helpers/saveFurthestSeenLevel';
 import { BrainPowerHelpers, LevelsHelpers } from '../helpers';
+import isFinalLevelInSection from '../helpers/isFinalLevelInSection';
+import isFirstLevelInSection from '../helpers/isFirstLevelInSection';
+import isFirstTimeLevelHasBeenSeen from '../helpers/isFirstTimeLevelHasBeenSeen';
 
 import { LEVELS_PER_SECTION } from '../config/gameConfig';
 
@@ -25,27 +28,19 @@ const GameScreen = props => {
     const currentGame = { ...savedOrGeneratedGame, id: level };
     setGame(currentGame);
 
-    if (isFirstTimeLevelHasBeenSeen) {
+    if (isFirstTimeLevelHasBeenSeen(context, level)) {
       context.setFurthestSeenLevel(currentGame);
       saveFurthestSeenLevel(currentGame);
     }
   }, []);
 
-  const isFirstTimeLevelHasBeenSeen = context.furthestSeenLevel.id ? level > context.furthestSeenLevel.id : true;
   const nextLevelHasNeverBeenSeen = level + 1 > context.furthestSeenLevel.id;
-  const isFinalLevelInSection = () => level % LEVELS_PER_SECTION === 0;
 
   const addGameToCompletedLevels = () => {
     const updatedCompletedLevels = [...screenProps.context.completedLevels];
     updatedCompletedLevels.push({ ...game, id: level });
     screenProps.context.setCompletedLevels(updatedCompletedLevels);
     saveNewlyCompletedLevel(game);
-  };
-
-  const setNextLevelAsSeen = () => {
-    const nextGame = generateGame(level + 1);
-    context.setFurthestSeenLevel({ ...nextGame, id: level + 1 });
-    navigateToLevelsWithCompletedSection();
   };
 
   const navigateToLevelsScreen = () => navigation.navigate('Levels');
@@ -58,9 +53,9 @@ const GameScreen = props => {
     if (levelHasNeverBeforeBeenWon) {
       addGameToCompletedLevels();
 
-      if (isFinalLevelInSection()) {
+      if (isFinalLevelInSection(level)) {
         if (nextLevelHasNeverBeenSeen) {
-          setNextLevelAsSeen();
+          navigateToLevelsWithCompletedSection();
         }
       }
     } else {
