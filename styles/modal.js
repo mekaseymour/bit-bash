@@ -2,6 +2,10 @@ import { Platform } from 'react-native';
 import * as Colors from './colors';
 import * as Typography from './typography';
 
+export const bottomSection = {
+  alignItems: 'center',
+};
+
 export const container = {
   backgroundColor: Colors.white,
   minHeight: 375,

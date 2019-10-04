@@ -64,18 +64,20 @@ const HowToModal = ({ context, visible }) => {
           <View style={ModalStyles.content}>
             <Text style={{ ...ModalStyles.header, marginVertical: 0, marginTop: 10 }}>How To Play</Text>
             {onFirstSection ? <GameInstructions /> : <GameSolutions />}
-            {onFirstSection ? <NextButton onPress={goToSecondSection} /> : <DismissButton onPress={dismissModal} />}
-            {onFirstSection ? (
-              <TouchableOpacity onPress={dismissModal}>
-                <Text style={{ textDecorationLine: 'underline', marginTop: 10, ...styles.modalText }}>
-                  Don't Need an Intro
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={returnToFirstSection}>
-                <Text style={{ textDecorationLine: 'underline', marginTop: 10, ...styles.modalText }}>Go Back</Text>
-              </TouchableOpacity>
-            )}
+            <View style={ModalStyles.bottomSection}>
+              {onFirstSection ? <NextButton onPress={goToSecondSection} /> : <DismissButton onPress={dismissModal} />}
+              {onFirstSection ? (
+                <TouchableOpacity onPress={dismissModal}>
+                  <Text style={{ textDecorationLine: 'underline', ...styles.modalText, marginTop: 10 }}>
+                    Don't Need an Intro
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={returnToFirstSection}>
+                  <Text style={{ textDecorationLine: 'underline', ...styles.modalText, marginTop: 10 }}>Go Back</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
       </View>
