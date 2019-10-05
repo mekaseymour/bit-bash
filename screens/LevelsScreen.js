@@ -31,7 +31,6 @@ const LevelsScreen = props => {
       setIsLoading(false);
     }
 
-    console.log('furthestSeenLevel', furthestSeenLevel);
     if (sectionCompleted) {
       setShowCompletedSectionModal(true);
     }
